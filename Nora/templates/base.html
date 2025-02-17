@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}N O R A{% endblock %}</title>
+    <!--Favicon Nora-->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <!--Css Bootstrap-->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!--Css Datatables-->
+    <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+    <!--Css iconos bootstrap-->
+    <link rel="stylesheet" href="{% static 'icons/bootstrap-icons/font/bootstrap-icons.css' %}">
+    <!--Css Sweetalert-->
+    <link rel="stylesheet" href="{% static 'node_modules/sweetalert2/dist/sweetalert2.min.css' %}">
+    <!--Css Local-->
+    <link rel="stylesheet" href="{% static 'css/local.css' %}">
+    <!--Js Jquery-->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <!--Js Datatables-->
+    <script src="{% static 'js/datatables.min.js' %}"></script>
+    <!--Js Bootstrap-->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <!--Js Sweetalert-->
+    <script src="{% static 'node_modules/sweetalert2/dist/sweetalert2.all.min.js' %}"></script>
+</head>
+<body class="body">
+    {% if user.is_authenticated %}
+        <!--Menu de navegacion superior-->
+        <nav class="navbar bg-navbar border-bottom border-secondary fixed-top">
+            <div class="container-fluid d-flex justify-content-between p-2">
+                <a class="navbar-brand text-light ms-2" href="{% url 'index' %}">
+                    <strong class="home">N O R A</strong>
+                </a>
+                <button class="btn btn-dark me-2" type="button" data-bs-toggle="offcanvas" 
+                data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                    <i class="bi bi-list me-1"></i>Menu
+                </button>
+            </div>
+        </nav>
+
+        <!--Menu de navegacion lateral derecho-->
+        <aside class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" 
+            id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+            <header class="offcanvas-header bg-navbar text-light border-bottom border-dark">
+                <h6 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+                    Menu de navegacion
+                </h6>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </header>
+            <footer class="offcanvas-body bg-secondary">
+                <div class="list-group mb-2">
+                    <span class="badge text-ligth bg-dark">  
+                        <i class="bi bi-person me-1"></i>
+                        {{ user.username }}
+                    </span>
+                </div>
+                <div class="border border-bottom border-dark mb-2"></div>
+                <div class="list-group">
+                    <!--url Barra-->
+                    <a class="list-group-item list-group-item-action list-group-item-secondary 
+                        {% if request.resolver_match.url_name in 'index agregar_pedido' %}
+                            active d-flex justify-content-between
+                        {% endif %}"
+                        href="{% url 'index' %}">
+                        <span>
+                            <i class="bi bi-grid-3x3 me-1"></i>
+                            Barra
+                        </span>
+                        {% if request.resolver_match.url_name in 'index agregar_pedido' %}
+                            <span class="badge text-warning d-flex align-items-center">
+                                <i class="bi bi-pin-angle"></i>
+                            </span>
+                        {% endif %}
+                    </a>
+                    {% if request.user.is_superuser %}
+                        <!--url Grupos-->
+                        <a class="list-group-item list-group-item-action list-group-item-secondary
+                        {% if request.resolver_match.url_name in 'gestionar_grupos agregar_grupo editar_grupo' %}
+                            active d-flex justify-content-between
+                        {% endif %}"
+                        href="{% url 'gestionar_grupos' %}">
+                            <span>
+                                <i class="bi bi-collection me-1"></i>Grupos
+                            </span>
+                            {% if request.resolver_match.url_name in 'gestionar_grupos agregar_grupo editar_grupo' %}
+                                <span class="badge text-warning d-flex align-items-center">
+                                    <i class="bi bi-pin-angle"></i>
+                                </span>
+                            {% endif %}
+                        </a>
+                        <!--url Productos-->
+                        <a class="list-group-item list-group-item-action list-group-item-secondary 
+                        {% if request.resolver_match.url_name in 'gestionar_productos agregar_producto editar_producto' %}
+                            active d-flex justify-content-between
+                        {% endif %}"
+                        href="{% url 'gestionar_productos' %}">
+                        <span>
+                            <i class="bi bi-egg-fried me-1"></i>
+                            Productos
+                        </span>
+                        {% if request.resolver_match.url_name in 'gestionar_productos agregar_producto editar_producto' %}
+                            <span class="badge text-warning d-flex align-items-center">
+                                <i class="bi bi-pin-angle"></i>
+                            </span>
+                        {% endif %}
+                        </a>
+                        <!--url Mesas-->
+                        <a class="list-group-item list-group-item-action list-group-item-secondary 
+                        {% if request.resolver_match.url_name in 'gestionar_mesas agregar_mesa editar_mesa' %}
+                            active d-flex justify-content-between
+                        {% endif %}"
+                        href="{% url 'gestionar_mesas' %}">
+                        <span>
+                            <i class="bi bi-easel me-1"></i>
+                            Mesas
+                        </span>
+                        {% if request.resolver_match.url_name in 'gestionar_mesas agregar_mesa editar_mesa' %}
+                            <span class="badge text-warning d-flex align-items-center">
+                                <i class="bi bi-pin-angle"></i>
+                            </span>
+                        {% endif %}
+                        </a>
+                        <!--url Bases-->
+                        <a class="list-group-item list-group-item-action list-group-item-secondary 
+                        {% if request.resolver_match.url_name in 'gestionar_bases agreagar_base editar_base' %}
+                            active d-flex justify-content-between
+                        {% endif %}" 
+                        href="{% url 'gestionar_bases' %}">
+                        <span>
+                            <i class="bi bi-cash-coin me-1"></i>
+                            Base
+                        </span>
+                        {% if request.resolver_match.url_name in 'gestionar_bases agregar_base editar_base' %}
+                            <span class="badge text-warning d-flex align-items-center">
+                                <i class="bi bi-pin-angle"></i>
+                            </span>
+                        {% endif %}
+                        </a>
+                        <!--url Arqueos-->
+                        <a class="list-group-item list-group-item-action list-group-item-secondary 
+                        {% if request.resolver_match.url_name in 'arqueo_caja' %}
+                            active d-flex justify-content-between
+                        {% endif %}" 
+                        href="{% url 'arqueo_caja' %}">
+                        <span>
+                            <i class="bi bi-cash me-1"></i>
+                            Arqueo
+                        </span>
+                        {% if request.resolver_match.url_name in 'arqueo_caja' %}
+                            <span class="badge text
+                            -warning d-flex align-items-center">
+                                <i class="bi bi-pin-angle"></i>
+                            </span>
+                        {% endif %}
+                        </a>    
+                    {% endif %}
+                    <!--url Pedidos-->
+                    <a class="list-group-item list-group-item-action list-group-item-secondary 
+                    {% if request.resolver_match.url_name in 'gestionar_pedidos ver_pedido editar_pedido' %}
+                        active d-flex justify-content-between
+                    {% endif %}"
+                    href="{% url 'gestionar_pedidos' %}">
+                    <span>
+                        <i class="bi bi-cart me-1"></i>
+                        Pedidos
+                    </span>
+                    {% if request.resolver_match.url_name in 'gestionar_pedidos ver_pedido editar_pedido' %}
+                        <span class="badge text-warning d-flex align-items-center">
+                            <i class="bi bi-pin-angle"></i>
+                        </span>
+                    {% endif %}
+                    </a>
+                    <!--url Retiros-->
+                    <a class="list-group-item list-group-item-action list-group-item-secondary 
+                    {% if request.resolver_match.url_name in 'gestionar_retiros agreagar_retiro editar_retiro' %}
+                        active d-flex justify-content-between
+                    {% endif %}"
+                    href="{% url 'gestionar_retiros' %}">
+                    <span>
+                        <i class="bi bi-building-dash me-1"></i>Retiros de caja
+                    </span>
+                    {% if request.resolver_match.url_name in 'gestionar_retiros agregar_retiro editar_retiro' %}
+                        <span class="badge text-warning d-flex align-items-center">
+                            <i class="bi bi-pin-angle"></i> 
+                        </span>
+                    {% endif %}
+                    </a>
+                    <!--url Cierres-->
+                    <a class="list-group-item list-group-item-action list-group-item-secondary 
+                    {% if request.resolver_match.url_name in 'gestionar_cierres agreagar_cierre editar_cierre' %}
+                        active d-flex justify-content-between
+                    {% endif %}"
+                    href="{% url 'gestionar_cierres' %}">
+                    <span>
+                        <i class="bi bi-calendar-check me-1"></i>Cierres de caja
+                    </span>
+                    {% if request.resolver_match.url_name in 'gestionar_cierres agregar_cierre editar_cierre' %}
+                        <span class="badge text-warning d-flex align-items-center">
+                            <i class="bi bi-pin-angle"></i> 
+                        </span>
+                    {% endif %}
+                    </a>
+                    <!--url Usuario-->
+                    <div class="list-group position-fixed bottom-0 end-0 m-2">
+                        <form id="logout-form" action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <fieldset>
+                                    <button type="submit" class="btn btn-dark">
+                                    <i class="bi bi-box-arrow-in-left me-1"></i>Cerrar sesion
+                                </button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </footer>
+        </aside>
+    {% endif %}
+
+    <!--Contenido de plantillas-->
+    <section class="container-fluid p-3 hv-100">
+        {% block content %}
+        {% endblock %}
+    </section>
+
+    <!--Control de mensajes-->
+    <section>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    Swal.fire({
+                        text: "{{ message|escapejs }}",
+                        icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% elif message.tags == 'info' %}info{% endif %}",
+                        toast: true,
+                        position: "bottom-end", 
+                        showConfirmButton: false, 
+                        timer: 4000, 
+                        timerProgressBar: true, 
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        },
+                        background: "{% if message.tags == 'error' %}#ff4d4d{% elif message.tags == 'success' %}#28a745{% elif message.tags == 'warning' %}#ffb109{% elif message.tags == 'info' %}#17a2b8{% endif %}",
+                        color: "{% if message.tags == 'error' or message.tags == 'success' or message.tags == 'info' %}#fff{% elif message.tags == 'warning' %}#000{% endif %}"
+                    });
+                </script>
+            {% endfor %}
+        {% endif %}
+    </section>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

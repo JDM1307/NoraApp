@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Generar Arqueo{% endblock %}
+{% block content %}
+{% load humanize %}
+<main class="d-flex flex-column justify-content-start align-items-center">
+    <!--Filtros-->
+    <section class="card text-bg-secondary mb-3">
+        <header class="card-header">
+            <div class="d-flex justify-content-between">
+                <h3>Generar Arqueo</h3>
+                <a class="btn btn-warning d-flex align-items-center" href="{% url 'index' %}">
+                    <i class="bi bi-arrow-90deg-left me-2"></i> Volver
+                </a>
+            </div>
+        </header>
+        <div class="card-body">
+            <form method="get" action="">
+                <div class="d-flex justify-content-start flex-wrap">
+                    <fieldset class="m-2">
+                        <label class="form-label">Fecha Desde</label>
+                        <input class="form-control" type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+                    </fieldset>
+                    <fieldset class="m-2">
+                        <label class="form-label">Fecha Hasta</label>
+                        <input class="form-control" type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
+                    </fieldset>
+                    <fieldset class="d-flex align-items-end m-2">
+                        <button class="btn btn-success" type="submit" name="buscar">Buscar</button>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+    </section>
+    <!--Tabla Base-->
+    <section class="card text-bg-secondary p-3">
+        <header class="card-header">
+            <h3>Arqueo de Caja</h3>
+        </header>
+        <div class="card-body">
+            <table id="tabla-arqueo" class="table table-dark table-hover border border-secondary">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Total Base(s)</strong></td>
+                        <td><input type="text" class="form-control" value="{{ total_base|intcomma }}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Retiro(s)</strong></td>
+                        <td><input type="text" class="form-control" value="{{ total_retiros|intcomma }}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ventas en Efectivo</strong></td>
+                        <td><input type="text" class="form-control" value="{{ total_efectivo|intcomma }}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ventas en Nequi</strong></td>
+                        <td><input type="text" class="form-control" value="{{ total_nequi|intcomma }}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ventas en Daviplata</strong></td>
+                        <td><input type="text" class="form-control" value="{{ total_davip|intcomma }}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total en Caja</strong></td>
+                        <td><input type="text" class="form-control" value="{{ total_caja|intcomma }}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Ventas</strong></td>
+                        <td><input type="text" class="form-control" value="{{ total_ventas|intcomma }}" readonly></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {    
+        $(document).ready(function () {
+                    // Inicializar DataTables
+                    $('#tabla-arqueo').DataTable({
+                        responsive: true,
+                        paging: false,        
+                        searching: false,    
+                        ordering: false,      
+                        info: true,           
+                        select: true,
+                        language: {
+                            select: {
+                                rows: {
+                                    1: "1 fila seleccionada"
+                                }
+                            },
+                            processing: "Procesando...",
+                            search: "Buscar:",
+                            info: "Mostrando arqueo de caja",
+                        },
+                    });
+                });
+    });
+</script>
+{% endblock %}

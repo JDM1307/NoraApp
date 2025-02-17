@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Gestionar Mesas{% endblock %}
+{% block content %}
+<main>
+    <!--Filtros y agregar Mesas-->
+    <section class="card text-bg-secondary mb-3">
+        <header class="card-header">
+            <div class="d-flex justify-content-between">
+                <h3>Gestionar Mesas</h3>
+                <a class="btn btn-primary d-flex align-items-center" href="{% url 'agregar_mesa' %}">
+                    <i class="bi bi-plus-square me-1"></i>Agregar
+                </a>
+            </div>
+        </header>
+        <footer class="card-body">
+            <form method="get" action="{% url 'gestionar_mesas' %}">
+                <div class="d-flex justify-content-start">
+                    <fieldset class="m-2">
+                        <label class="form-label">Buscar mesas</label>
+                        <input class="form-control" autocomplete="off" type="number" name="q" value="{{ query }}" placeholder="Digite el numero de mesa">
+                    </fieldset>
+                    <fieldset class="d-flex align-items-end m-2">
+                        <button class="btn btn-success" type="submit">Buscar</button>
+                    </fieldset>
+                </div>
+            </form>
+        </footer>
+    </section>
+    <!--Tabla Mesas-->
+    <section class="card text-bg-secondary p-3">
+        <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
+            <thead class="table-secondary">
+                <tr>
+                    <th class="text-center border-end border-dark">#</th>
+                    <th class="text-center">Numero Mesa</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mesa in mesas %}
+                    <tr>
+                        <td class="text-center border-end border-secondary">{{ forloop.counter }}</td>
+                        <td class="text-center">{{ mesa.numero_mesa }}</td>
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-warning me-1" href="{% url 'editar_mesa' mesa.id %}"
+                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a class="btn btn-sm btn-danger delete-btn" 
+                                data-id="{{ mesa.id }}" 
+                                data-num="{{ mesa.numero_mesa }}"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="right" 
+                                data-bs-title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+        </table>
+    </section>
+</article>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                let mesaId = this.getAttribute("data-id");
+                let mesaNum = this.getAttribute("data-num");
+                let deleteUrl = `eliminar/${mesaId}/`;
+
+                const Toast = Swal.mixin({
+                    toast: false,
+                    position: "center",
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
+                    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                    customClass: {
+                        confirmButton: "swal2-confirm",
+                        cancelButton: "swal2-cancel"
+                    },
+                    timer: 10000,
+                    timerProgressBar: true,
+                    icon: "warning",
+                    background: "#1e272e",
+                    color: "#f8f9fa",
+                    width: "300px"
+                });
+
+                Toast.fire({
+                    text: `¿Seguro que deseas eliminar la mesa #${mesaNum}?`,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = deleteUrl;
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

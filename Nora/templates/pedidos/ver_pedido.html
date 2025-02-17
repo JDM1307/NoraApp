@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Ver Pedido{% endblock %}
+{% block content %}
+<main>
+    <section class="card text-bg-secondary mb-3">
+        <header class="card-header d-flex justify-content-between">
+            <h3>Ver Pedido</h3>
+            <a class="btn btn-warning d-flex align-items-center" href="{% url 'gestionar_pedidos' %}">
+                <i class="bi bi-arrow-90deg-left me-2"></i>Volver
+            </a>
+        </header>
+        <footer class="card-body d-flex justify-content-center align-items-center">
+            <section class="card border border-dark">
+                <header class="card-header bg-dark text-ligth d-flex justify-content-between">
+                    <h3><span class="badge text-wrap bg-navbar">
+                        Mesa {{ pedido.mesa_id }}
+                    </span></h3>
+                    <h3>
+                        <span class="badge text-wrap bg-secondary">
+                            Pedido #{{ pedido.numero_pedido }}
+                        </span> 
+                    </h3>
+                </header>
+            <div class="card-body bg-tertiary">
+                <table class="table table-sm table-hover border border-dark" id="mi-tabla">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-start">Cantidad</th>
+                            <th class="text-start">Productos</th>
+                            <th class="text-start">Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in productos_con_cantidades  %}
+                            <tr>
+                                <td class="text-start">{{ item.cantidad }}</td>
+                                <td class="text-start">{{ item.producto.nombre_producto }}</td>
+                                <td class="text-start">${{ item.total_producto }} </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <footer class="card-footer bg-dark d-flex justify-content-between align-items-center">
+                <fieldset class="d-flex align-items-center">
+                    {% if pedido.estado_pedido == 2 %}
+                        <span class="badge bg-success">Efectivo</span>
+                    {% elif pedido.estado_pedido == 3 %}
+                        <span class="badge bg-primary">Nequi</span>
+                    {% elif pedido.estado_pedido == 4 %}
+                        <span class="badge bg-danger">Daviplata</span>
+                    {% endif %}
+                </fieldset>
+                <fieldset class="d-flex align-items-center">
+                    <div class="input-group">
+                        <input class="form-control" type="text" value="Total: ${{ pedido.total_pedido }}" readonly>
+                    </div>
+                </fieldset>
+            </footer>
+        </section>
+        </footer>
+    </section>
+</main>
+{% endblock %}

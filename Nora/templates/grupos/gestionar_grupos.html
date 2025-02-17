@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Gestionar Grupos{% endblock %}
+{% block content %}
+<main>
+    <!--Filtros y agregar Grupos-->
+    <section class="card text-bg-secondary mb-3">
+        <header class="card-header">
+            <div class="d-flex justify-content-between">
+                <h3>Gestionar Grupos</h3>
+                <a class="btn btn-primary d-flex align-items-center" href="{% url 'agregar_grupo' %}">
+                    <i class="bi bi-plus-square me-1"></i>Agregar
+                </a>
+            </div>
+        </header>
+        <footer class="card-body">
+            <form method="get" action="{% url 'gestionar_grupos' %}">
+                <div class="d-flex justify-content-start">
+                    <fieldset class="m-2">
+                        <label class="form-label" for="buscar_grupo">Buscar grupos</label>
+                        <input class="form-control" id="buscar_grupo" autocomplete="off" type="text" name="q" 
+                        value="{{ query }}" placeholder="Digite nombre del grupo">
+                    </fieldset>
+                    <fieldset class="d-flex align-items-end m-2">
+                        <button class="btn btn-success" type="submit">Buscar</button>
+                    </fieldset>
+                </div>
+            </form>
+        </footer>
+    </section>
+    <!--Tabla Grupos-->
+    <section class="card text-bg-secondary p-3">
+        <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
+            <thead class="table-secondary">
+                <tr>
+                    <th class="text-start border-end border-dark">#</th>
+                    <th class="text-start">Nombre Grupo</th>
+                    <th class="text-start">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grupo in grupos%}
+                    <tr>
+                        <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
+                        <td class="text-start">{{ grupo.nombre_grupo }}</td>
+                        <td class="text-start">
+                            <a class="btn btn-sm btn-warning" href="{% url 'editar_grupo' grupo.id %}"
+                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a class="btn btn-sm btn-danger delete-btn"
+                            data-id="{{ grupo.id }}"
+                            data-name="{{ grupo.nombre_grupo }}"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="right" 
+                            data-bs-title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<script>
+     document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                let grupoId = this.getAttribute("data-id");
+                let grupoName = this.getAttribute("data-name");
+                let deleteUrl = `eliminar/${grupoId}/`;
+
+                const Toast = Swal.mixin({
+                    toast: false,
+                    position: "center",
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
+                    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                    customClass: {
+                        confirmButton: "swal2-confirm",
+                        cancelButton: "swal2-cancel"
+                    },
+                    timer: 10000,
+                    timerProgressBar: true,
+                    icon: "warning",
+                    background: "#1e272e",
+                    color: "#f8f9fa",
+                    width: "300px"
+                });
+
+                Toast.fire({
+                    text: `¿Seguro que deseas eliminar el grupo: "${grupoName}"?`,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = deleteUrl;
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

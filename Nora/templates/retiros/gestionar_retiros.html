@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Gestionar Retiros{% endblock %}
+{% block content %}
+<main>
+    <!--Filtros y agregar Retiros-->
+    <section class="card text-bg-secondary mb-3">
+        <header class="card-header">
+            <div class="d-flex justify-content-between">
+                <h3>Gestionar Retiros</h3>
+                <a class="btn btn-primary d-flex align-items-center" href="{% url 'agregar_retiro' %}">
+                    <i class="bi bi-plus-square me-1"></i>Agregar
+                </a>
+            </div>
+        </header>
+        <footer class="card-body">
+            <form method="get" action="#">
+                <div class="d-flex justify-content-start flex-wrap">
+                    <fieldset class="m-2">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input class="form-control" type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+                    </fieldset>
+                    <fieldset class="m-2">
+                        <label class="form-label">Fecha Fin</label>
+                        <input class="form-control" type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
+                    </fieldset>
+                    <fieldset class="d-flex align-items-end m-2">
+                        <button class="btn btn-success" type="submit">Buscar</button>
+                    </fieldset>
+                </div>
+            </form>
+        </footer>
+    </section>
+    <!--Tabla Retiros de caja-->
+    <section class="card text-bg-secondary p-3">
+        <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
+            <thead class="table-secondary">
+                <tr>
+                    <th class="text-start border-end border-dark">#</th>
+                    <th class="text-start">Valor</th>
+                    <th class="text-start">Observaciones</th>
+                    <th class="text-start">Responsable</th>
+                    <th class="text-satrt">Creado</th>
+                    {% if request.user.is_superuser %}
+                    <th class="text-satrt">Estado</th>
+                    <th class="text-start">Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for rt in retiros %}
+                    <tr>
+                        <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
+                        <td class="text-start">{{ rt.retiro_monto }}</td>
+                        <td class="text-start">{{ rt.retiro_observacion }}</td>
+                        <td class="text-start">{{ rt.usuario.username|default:"?" }}</td>
+                        <td class="text-start">{{ rt.creado_en }}</td>
+                        {% if request.user.is_superuser %}
+                        <td class="text-start">
+                            {% if rt.creado_en != rt.actualizado_en %} 
+                                <i class="bi bi-pencil-square text-warning"></i>
+                            {% else %}
+                                <i class="bi bi-check-square text-success"></i>
+                            {% endif %}
+                        </td>
+                        <td class="text-start">
+                            <a class="btn btn-sm btn-warning" href="{% url 'editar_retiro' rt.id %}"
+                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a class="btn btn-sm btn-danger delete-btn"
+                            data-id="{{ rt.id }}"
+                            data-obs="{{ rt.retiro_observacion }}"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="right" 
+                            data-bs-title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<script>
+     document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                let retiroId = this.getAttribute("data-id");
+                let retiroObs = this.getAttribute("data-obs");
+                let deleteUrl = `eliminar/${retiroId}/`;
+
+                const Toast = Swal.mixin({
+                    toast: false,
+                    position: "center",
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
+                    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                    customClass: {
+                        confirmButton: "swal2-confirm",
+                        cancelButton: "swal2-cancel"
+                    },
+                    timer: 10000,
+                    timerProgressBar: true,
+                    icon: "warning",
+                    background: "#1e272e",
+                    color: "#f8f9fa",
+                    width: "300px"
+                });
+
+                Toast.fire({
+                    text: `¿Seguro que deseas eliminar el retiro "${retiroObs}"?`,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = deleteUrl;
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+
