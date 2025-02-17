@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Agregar Mesa{% endblock %}
+{% block content %}
+<main>
+    <section class="card text-bg-secondary mb-3">
+        <header class="card-header">
+            <h3>Editar Mesa</h3>
+        </header>
+        <footer class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-start">
+                    <fieldset class="m-2">
+                        <label class="form-label" for="numero_mesa">Número de mesa:</label>
+                        <input class="form-control" type="number" id="numero_mesa" name="numero_mesa" value="{{ mesa.numero_mesa }}" placeholder="Digite un numero" required>
+                    </fieldset>
+                    <div class="d-flex align-items-end">
+                        <fieldset class="m-2">
+                            <button class="btn btn-success" type="submit">Guardar</button>
+                        </fieldset>
+                        <fieldset class="m-2">
+                            <a class="btn btn-danger" href="{% url 'gestionar_mesas' %}">Cancelar</a>
+                        </fieldset>
+                    </div>
+                </div>
+            </form>
+        </footer>
+    </section>
+</main>
+{% endblock %}

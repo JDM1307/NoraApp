@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Gestionar Cierres{% endblock %}
+{% block content %}
+{% load humanize %}
+<main>
+    <!--Filtros y agregar Cierres-->
+    <section class="card text-bg-secondary mb-3">
+        <header class="card-header">
+            <div class="d-flex justify-content-between">
+                <h3>Gestionar Cierres</h3>
+                <a class="btn btn-primary d-flex align-items-center" href="{% url 'agregar_cierre' %}">
+                    <i class="bi bi-plus-square me-1"></i>Agregar
+                </a>
+            </div>
+        </header>
+        <footer class="card-body">
+            <form method="get" action="#">
+                <div class="d-flex justify-content-start flex-wrap">
+                    <fieldset class="m-2">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input class="form-control" type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+                    </fieldset>
+                    <fieldset class="m-2">
+                        <label class="form-label">Fecha Fin</label>
+                        <input class="form-control" type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
+                    </fieldset>
+                    <fieldset class="d-flex align-items-end m-2">
+                        <button class="btn btn-success" type="submit">Buscar</button>
+                    </fieldset>
+                </div>
+            </form>
+        </footer>
+    </section>
+    <!--Tabla Cierres de caja-->
+    <section class="card text-bg-secondary p-3">
+        <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
+            <thead class="table-secondary">
+                <tr>
+                    <th class="text-start border-end border-dark">#</th>
+                    <th class="text-start">Base</th>
+                    <th class="text-start">T. Retiros</th>
+                    <th class="text-start">T. Efectivo</th>
+                    <th class="text-start">T. Nequi</th>
+                    <th class="text-start">T. Daviplata</th>
+                    <th class="text-start">T. Ventas</th>
+                    <th class="text-start">T. Caja</th>
+                    <th class="text-start">Valid. Caja</th>
+                    <th class="text-start">T. Observaciones</th>
+                    <th class="text-start">Responsable</th>
+                    <th class="text-start">Fecha</th>
+                    <th class="text-start">Estado</th>
+                    {% if request.user.is_superuser %}
+                        <th class="text-start">Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for cr in cierres %}
+                    <tr>
+                        <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
+                        <td class="text-start">{{ cr.base_cierre }}</td>
+                        <td class="text-start bg-danger">{{ cr.retiros_cierre }}</td>
+                        <td class="text-start">{{ cr.vEfectivo_cierre }}</td>
+                        <td class="text-start">{{ cr.vNequi_cierre }}</td>
+                        <td class="text-start">{{ cr.vDavip_cierre }}</td>
+                        <td class="text-start bg-success">{{ cr.vTotal_cierre }}</td>
+                        <td class="text-start">{{ cr.tCaja_cierre }}</td>
+                        <td class="text-start">{{ cr.us_caja }}</td>
+                        <td class="text-start">{{ cr.obs_cierre }}</td>
+                        <td class="text-start">{{ cr.usuario.username|default:"?" }}</td>
+                        <td class="text-start">{{ cr.creado_en }}</td>
+                        <td class="text-start">
+                            {% if cr.creado_en != cr.actualizado_en %} 
+                                <i class="bi bi-pencil-square text-warning"></i>
+                            {% else %}
+                            <i class="bi bi-check-square text-success"></i>
+                            {% endif %}
+                        </td>
+                        {% if request.user.is_superuser %}
+                        <td class="text-start">
+                            <a class="btn btn-sm btn-warning" href="{% url 'editar_cierre' cr.id %}"
+                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Editar Base{% endblock %}
+{% block content %}
+<main class="d-flex justify-content-center mt-5">
+    <section class="card text-bg-secondary">
+        <header class="card-header">
+            <h3>Editar Base</h3>
+        </header>
+        <footer class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex flex-column">
+                    <fieldset class="">
+                        <label class="form-label" for="valor_base">Valor</label>
+                        <input placeholder="Ingrese la base" class="form-control" type="number" id="valor_base"
+                        value="{{ base.base_dia }}" name="base_dia" required>
+                    </fieldset>
+                    <fieldset class="mt-2">
+                        <label class="form-label" for="observacion_base">Observacion</label>
+                        <textarea placeholder="Agregar observacion" class="form-control" id="observacion_base" 
+                        name="base_observacion">{{ base.base_observacion }} (Editada)</textarea>
+                    </fieldset>
+                    <fieldset class="d-flex justify-content-between mt-2">
+                        <button class="btn btn-success save-btn" type="button">Grabar</button>
+                        <a class="btn btn-danger" href="{% url 'gestionar_bases' %}">Cancelar</a>
+                    </fieldset>
+                </div>
+            </form>
+        </footer>
+    </section>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector(".save-btn").addEventListener("click", function (e) {
+            e.preventDefault();
+            let form = this.closest("form");
+            let base = document.getElementById("valor_base");
+            valorBase = base.value;
+
+            Swal.fire({
+                text: `¿Esta seguro de actualizar la base en: $${valorBase}?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, guardar",
+                cancelButtonText: "Cancelar",
+                background: "#1e272e",
+                color: "#f8f9fa",
+                width: "300px"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Envía el formulario si el usuario confirma
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
