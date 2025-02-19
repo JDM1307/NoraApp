@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Barra{% endblock %}
 {% block content %}
-<main>
+<body data-page="index" data-url="{% url 'obtener_mesas' %}">
     <!--Mesas-->
     <section>
         <header>
@@ -11,30 +11,24 @@
             </h3>
         </header>
         <div class="row row-cols-4">
-            {% for mesa_info in mesas_info %}
-                {% with mesa=mesa_info.mesa pedido=mesa_info.pedido_activo esta_ocupada=mesa_info.esta_ocupada %}
-                    <a 
-                        href="{% if not esta_ocupada %}{% url 'agregar_pedido' mesa.numero_mesa %}
-                        {% else %}{% url 'editar_pedido' pedido.numero_pedido %}{% endif %}" 
-                        class="link-underline link-underline-opacity-0 col-lg-2 col-md-2 col-4" 
-                        data-id="{{ mesa.id }}"
-                        data-bs-toggle="tooltip"
-                        title="{% if esta_ocupada %}Pedido #{{ pedido.numero_pedido }}: {{ pedido.actualizado_en|date:'H:i:s' }}{% else %}Mesa disponible{% endif %}">
-                        <div 
-                            class="card mb-4 p-2 card-hover 
-                            {% if esta_ocupada %}text-bg-danger{% else %}bg-navbar text-light{% endif %}">
-                            <img src="{% static 'default_images/mesa.png' %}"class="card-img-top">
-                            <div class="card-body border-top text-center p-0">
-                                <strong>Mesa {{ mesa.numero_mesa }}</strong>
-                                <p class="m-0">{% if esta_ocupada %}Ocupada{% else %}Disponible{% endif %}</p>
-                            </div>
-                        </div>
-                    </a>
-                {% endwith %}
+            {% for mesa in mesas %}
+            <a 
+                href="{% if mesa.estado_mesa == 0 %}{% url 'agregar_pedido' mesa.numero_mesa %}
+                {% elif mesa.estado_mesa == 1 %}{% url 'editar_pedido' mesa.pedido_asociado %}{% endif %}" 
+                class="link-underline link-underline-opacity-0 col-lg-2 col-md-2 col-4 mesa-{{ mesa.numero_mesa }}" >
+                <div class="card mb-4 p-2 card-hover 
+                    {% if mesa.estado_mesa == 1 %}text-bg-danger{% else %}bg-navbar text-light{% endif %}">
+                    <img src="{% static 'default_images/mesa.png' %}" class="card-img-top">
+                    <div class="card-body border-top text-center p-0">
+                        <h4 class="m-0">Mesa {{ mesa.numero_mesa }}</h4>
+                        <p class="m-0">{% if mesa.estado_mesa == 1 %}Ocupada{% else %}Disponible{% endif %}</p>
+                    </div>
+                </div>
+            </a>
             {% endfor %}
         </div>
     </section>
-</main>
+</body>
 {% endblock %}
 
 

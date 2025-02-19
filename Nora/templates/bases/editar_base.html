@@ -18,11 +18,11 @@
                     <fieldset class="mt-2">
                         <label class="form-label" for="observacion_base">Observacion</label>
                         <textarea placeholder="Agregar observacion" class="form-control" id="observacion_base" 
-                        name="base_observacion">{{ base.base_observacion }} (Editada)</textarea>
+                        name="base_observacion">{{ base.base_observacion }}</textarea>
                     </fieldset>
                     <fieldset class="d-flex justify-content-between mt-2">
-                        <button class="btn btn-success save-btn" type="button">Grabar</button>
                         <a class="btn btn-danger" href="{% url 'gestionar_bases' %}">Cancelar</a>
+                        <button class="btn btn-success save-btn" type="button">Grabar</button>
                     </fieldset>
                 </div>
             </form>

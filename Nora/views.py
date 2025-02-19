@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import DatabaseError, IntegrityError
 from django.db.models import Sum
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import localtime, now, make_aware
 from datetime import datetime, timedelta
@@ -42,21 +43,39 @@ def login(request):
 #INDEX
 @login_required
 def index(request):
-    try: 
+    try:
         mesas = Mesa.objects.all().order_by('numero_mesa')
-        mesas_info = []
+
+        # Agregar total_pedido y responsable a cada mesa si tiene un pedido asociado
         for mesa in mesas:
-            pedido_activo = mesa.pedidos.filter(estado_pedido=1).first() #Ocupada
-            mesas_info.append({
-                'mesa': mesa,
-                'esta_ocupada': bool(pedido_activo),
-                'pedido_activo': pedido_activo,  #Disponible
-            })
-        return render(request, 'index/index.html', {'mesas_info': mesas_info})
-    
+            if mesa.pedido_asociado:
+                pedido = Pedido.objects.filter(numero_pedido=mesa.pedido_asociado).first()
+                mesa.total_pedido = pedido.total_pedido if pedido else None
+                mesa.responsable = pedido.usuario if pedido else "?"
+            else:
+                mesa.total_pedido = None
+                mesa.responsable = "?"
+
+        return render(request, 'index/index.html', {'mesas': mesas})
+
     except Exception as e:
         messages.error(request, f'Ocurrió un error: {e}')
         return render(request, 'errores/error_general.html', {'error_message': str(e)})
+
+def obtener_mesas(request):
+    mesas = Mesa.objects.all().order_by('numero_mesa')
+    data = []
+
+    for mesa in mesas:
+        pedido = Pedido.objects.filter(numero_pedido=mesa.pedido_asociado).first() if mesa.pedido_asociado else None
+        data.append({
+            'numero_mesa': mesa.numero_mesa,
+            'estado_mesa': mesa.estado_mesa,
+            'responsable': pedido.usuario.username if pedido else "?",
+            'total_pedido': pedido.total_pedido if pedido else 0
+        })
+
+    return JsonResponse({'mesas': data})
 
 
 #BASE 
@@ -550,58 +569,68 @@ def gestionar_pedidos(request):
 @login_required
 def agregar_pedido(request, numero_mesa=None):
     if request.method == 'POST':
-        # Obtener datos del formulario
-        mesa_id = request.POST.get('mesa')  # ID de la mesa
+        mesa_id = request.POST.get('mesa')
         estado = request.POST.get('estado')
-        nuevos_productos = request.POST.get('productos')  # Productos y cantidades en formato JSON
+        nuevos_productos = request.POST.get('productos')
+
+        # Verificar que hay datos en productos
+        if not nuevos_productos:
+            messages.warning(request, 'Debe seleccionar al menos 1 producto')
+            return redirect('agregar_pedido')
+
         try:
-            productos = json.loads(nuevos_productos)  # Convertir JSON a diccionario
+            productos = json.loads(nuevos_productos)
         except json.JSONDecodeError:
-            productos = None
-    
+            messages.error(request, 'Error en el formato de productos')
+            return redirect('agregar_pedido')
+
         if mesa_id and productos and estado:
             try:
-                # Validar que la mesa exista
-                mesa = Mesa.objects.get(numero_mesa=mesa_id)
+                mesa = get_object_or_404(Mesa, numero_mesa=mesa_id)
 
-                # Crear el pedido
+                # Obtener el siguiente número de pedido
                 ultimo_pedido = Pedido.objects.order_by('numero_pedido').last()
                 siguiente_numero_pedido = ultimo_pedido.numero_pedido + 1 if ultimo_pedido else 1
 
-                pedido = Pedido(
+                pedido = Pedido.objects.create(
                     numero_pedido=siguiente_numero_pedido,
                     mesa=mesa,
-                    total_pedido=0,  # Inicializamos en 0, lo calcularemos más adelante
-                    estado_pedido=int(estado),  # Estado guardado (1) o finalizado (2,3,4)
+                    total_pedido=0,  # Se actualizará después
+                    estado_pedido=int(estado),
                     usuario=request.user
                 )
-                pedido.save()
 
-                # Asociar productos con sus cantidades al pedido
                 total_pedido = 0
                 for producto_id, cantidad in productos.items():
-                    cantidad = int(cantidad)
-                    if cantidad > 0:  # Asegurar que la cantidad sea válida
-                        producto = Producto.objects.get(id=producto_id)
-                        PedidoProducto.objects.create(
-                            pedido=pedido,
-                            producto=producto,
-                            cantidad=cantidad
-                        )
-                        total_pedido += producto.precio * cantidad  # Calculamos el total del pedido
+                    try:
+                        cantidad = int(cantidad)
+                        if cantidad > 0:
+                            producto = get_object_or_404(Producto, id=producto_id)
+                            PedidoProducto.objects.create(pedido=pedido, producto=producto, cantidad=cantidad)
+                            total_pedido += producto.precio * cantidad
+                    except (ValueError, Producto.DoesNotExist):
+                        messages.error(request, f'Error con el producto ID {producto_id}')
+                        return redirect('agregar_pedido')
 
-                # Actualizar el total del pedido
+                # Actualizar total del pedido
                 pedido.total_pedido = total_pedido
                 pedido.save()
 
+                # Actualizar estado de la mesa
                 if int(estado) != 1:
+                    mesa.estado_mesa = 0
+                    mesa.pedido_asociado = None
                     messages.success(request, 'Pedido finalizado exitosamente')
-                else:    
+                else:
+                    mesa.estado_mesa = 1
+                    mesa.pedido_asociado = siguiente_numero_pedido
                     messages.info(request, 'Pedido comandado exitosamente')
+
+                mesa.save()
                 return redirect('index')
-            
+
             except Exception as e:
-                messages.error(request, f'Error: {str(e)}')
+                messages.error(request, f'Error inesperado: {str(e)}')
         else:
             messages.warning(request, 'Debe seleccionar al menos 1 producto')
 
@@ -642,57 +671,64 @@ def ver_pedido(request, numero_pedido):
 
 @login_required
 def editar_pedido(request, numero_pedido):
-    try:
-        # Obtener el pedido existente
-        pedido = Pedido.objects.get(numero_pedido=numero_pedido)
-    except Pedido.DoesNotExist:
-        messages.error(request, 'El pedido no existe.')
-        return redirect('index')
+    pedido = get_object_or_404(Pedido, numero_pedido=numero_pedido)
 
     if request.method == 'POST':
-        # Obtener nuevos productos con sus cantidades del formulario
-        nuevos_productos = request.POST.get('productos')  
+        nuevos_productos = request.POST.get('productos')
+        mesa_pedido = request.POST.get('mesa')
         estado = request.POST.get('estado')
-        usuario = request.user
+
+        if not nuevos_productos:
+            messages.warning(request, 'Debe seleccionar al menos 1 producto')
+            return redirect('editar_pedido', numero_pedido=numero_pedido)
+
         try:
-            productos = json.loads(nuevos_productos)  # Convertir ("productos":cantidades) JSON a diccionario
+            productos = json.loads(nuevos_productos)
         except json.JSONDecodeError:
-            messages.warning(request, 'No fue posible obtener los productos de este pedido')
-            productos = None
+            messages.error(request, 'Error en el formato de productos')
+            return redirect('editar_pedido', numero_pedido=numero_pedido)
 
-        if productos and estado:
+        if mesa_pedido and productos and estado:
             try:
-                # Actualizar los productos del pedido
-                total_pedido = 0
+                mesa = get_object_or_404(Mesa, numero_mesa=mesa_pedido)
 
-                # Limpiar los productos existentes en el pedido
+                # Limpiar productos existentes antes de actualizar
                 PedidoProducto.objects.filter(pedido=pedido).delete()
 
+                total_pedido = 0
                 for producto_id, cantidad in productos.items():
-                    cantidad = int(cantidad)
-                    if cantidad > 0:  # Validar que la cantidad sea válida
-                        producto = Producto.objects.get(id=producto_id)
-                        PedidoProducto.objects.create(
-                            pedido=pedido,
-                            producto=producto,
-                            cantidad=cantidad
-                        )
-                        total_pedido += producto.precio * cantidad  # Calcular el total
+                    try:
+                        cantidad = int(cantidad)
+                        if cantidad > 0:
+                            producto = get_object_or_404(Producto, id=producto_id)
+                            PedidoProducto.objects.create(pedido=pedido, producto=producto, cantidad=cantidad)
+                            total_pedido += producto.precio * cantidad
+                    except (ValueError, Producto.DoesNotExist):
+                        messages.error(request, f'Error con el producto ID {producto_id}')
+                        return redirect('editar_pedido', numero_pedido=numero_pedido)
 
-                # Actualizar el total del pedido
+                # Actualizar pedido
                 pedido.total_pedido = total_pedido
                 pedido.estado_pedido = int(estado)
-                pedido.usuario = usuario
+                pedido.usuario = request.user
                 pedido.save()
 
+                # Actualizar estado de la mesa
                 if int(estado) != 1:
+                    mesa.estado_mesa = 0
+                    mesa.pedido_asociado = None
                     messages.success(request, 'Pedido finalizado exitosamente.')
                 else:
+                    mesa.estado_mesa = 1
+                    mesa.pedido_asociado = pedido.numero_pedido
                     messages.info(request, 'Pedido actualizado exitosamente.')
+
+                mesa.save()
                 return redirect('index')
 
             except Exception as e:
-                messages.error(request, f'Error: {str(e)}')
+                messages.error(request, f'Error inesperado: {str(e)}')
+
         else:
             messages.error(request, 'Debe haber al menos 1 producto para guardar')
 
@@ -701,22 +737,20 @@ def editar_pedido(request, numero_pedido):
     productos = Producto.objects.all().order_by('nombre_producto')
     grupos = Grupo.objects.all().order_by('nombre_grupo')
 
-    # Preparar datos para la plantilla
-    productos_actuales = {
-        str(producto.producto.id): producto.cantidad
-        for producto in productos_pedido
-    }
+    # Preparar datos actuales para el formulario
+    productos_actuales = {str(p.producto.id): p.cantidad for p in productos_pedido}
     productos_actuales_json = json.dumps(productos_actuales)
 
-    # Añadir total de cada producto al contexto
-    for producto_pedido in productos_pedido:
-        producto_pedido.precio_total = producto_pedido.producto.precio * producto_pedido.cantidad
+    # Calcular total de cada producto en el pedido
+    for p in productos_pedido:
+        p.precio_total = p.producto.precio * p.cantidad
 
     return render(request, 'pedidos/editar_pedido.html', {
         'grupos': grupos,
         'pedido': pedido,
         'productos': productos,
-        'productos_pedido': productos_pedido,  # Pasar los productos del pedido
+        'mesa_seleccionada': pedido.mesa.numero_mesa,
+        'productos_pedido': productos_pedido,
         'productos_actuales': productos_actuales_json,
     })
 
@@ -787,10 +821,10 @@ def agregar_cierre(request):
     total_caja = (total_base + total_efectivo) - total_retiros
     try:
         if request.method == 'POST':
-                #Crear cierre
-                us_caja = request.POST.get('us_caja')
-                obs_cierre = request.POST.get('obs_cierre')
-
+            #Crear cierre
+            us_caja = request.POST.get('us_caja')
+            obs_cierre = request.POST.get('obs_cierre')
+            if us_caja:
                 cierre = Cierre(
                     base_cierre=total_base,
                     retiros_cierre=total_retiros,
@@ -805,8 +839,11 @@ def agregar_cierre(request):
                 )
                 cierre.save()
                 messages.success(request, 'Cierre grabado exitosamente.')
-                return redirect('gestionar_cierres')
-
+            else:
+                messages.warning(request, 'El campo "Validar Caja" es requerido')
+                return redirect('agregar_cierre')
+            return redirect('gestionar_cierres')
+        
     except Exception as e:
         messages.error(request, f'Hubo un error: {e}')
         return render(request, 'errores/error_general.html', {'error_message': str(e)})
@@ -853,35 +890,35 @@ def editar_cierre(request, cierre_id):
     total_ventas = total_efectivo + total_nequi + total_davip #total de ventas
     total_caja = (total_base + total_efectivo) - total_retiros #total en caja
     cierre = get_object_or_404(Cierre, id=cierre_id)
-    if request.method == 'POST':
-        try:
-            us_caja = request.POST.get('us_caja')
-            obs_cierre = request.POST.get('obs_cierre')
-            usuario = request.user
-
-            cierre.us_caja = us_caja
-            cierre.obs_cierre = obs_cierre
-            cierre.usuario = usuario
-            cierre.save()
-            messages.success(request, 'Cierre actualizado exitosamente.')
-            return redirect('gestionar_cierres')
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
-    else:
-        return render(request, 'cierres/editar_cierre.html', {
-            'cierre': cierre,
-            'us_caja': cierre.us_caja,
-            'obs_cierre': cierre.obs_cierre,
-            'total_base': total_base,
-            'total_retiros': total_retiros,
-            'total_ventas': total_ventas,
-            'total_efectivo': total_efectivo,
-            'total_nequi': total_nequi,
-            'total_davip': total_davip,
-            'total_caja': total_caja,
-            'fecha_inicio': fecha_inicio.date(),
-            'fecha_fin': fecha_fin.date(),
-        })
-
-    return render(request, 'cierres/editar_cierre.html', {'cierre': cierre})
+    try:
+        if request.method == 'POST':
+                us_caja = request.POST.get('us_caja')
+                obs_cierre = request.POST.get('obs_cierre')
+                usuario = request.user
+                if us_caja:
+                    cierre.us_caja = us_caja
+                    cierre.obs_cierre = obs_cierre
+                    cierre.usuario = usuario
+                    cierre.save()
+                    messages.success(request, 'Cierre actualizado exitosamente.')
+                    return redirect('gestionar_cierres')
+                else:
+                    messages.warning(request, 'El campo "Validar Caja" es requerido')
+                    return redirect('agregar_cierre')
+    except Exception as e:
+        messages.error(request, f'Error: {str(e)}')
+    return render(request, 'cierres/editar_cierre.html', {
+        'cierre': cierre,
+        'us_caja': cierre.us_caja,
+        'obs_cierre': cierre.obs_cierre,
+        'total_base': total_base,
+        'total_retiros': total_retiros,
+        'total_ventas': total_ventas,
+        'total_efectivo': total_efectivo,
+        'total_nequi': total_nequi,
+        'total_davip': total_davip,
+        'total_caja': total_caja,
+        'fecha_inicio': fecha_inicio.date(),
+        'fecha_fin': fecha_fin.date(),
+    })
 

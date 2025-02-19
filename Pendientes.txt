@@ -1,11 +1,9 @@
 POR IMPLEMENTAR:
 
-1. Asignar 2 campos al modelo de mesa:
-    -estado_mesa (0=desocupada, 1=ocupada) no nulo, int
-    -pedido_asociado (para editar el pedido que se creo en esa mesa y aun no ha fnalizado) Null, int
+1. Implementar confirmacion con toast de sweetalert a agregar_pedido y editar_pedido al finalizar una compra
 
-2. Configurar la logica en agregar_pedido y editar_pedido
-    -al crear un nunevo pedido o actualizarlo se debe actualizar el campo estado_mesa de la mesa seleccionada 1, y el campo pedido_asociado con el pedido correspondiente
-    -al finalizar un pedido se debe actualizar el campo estado_mesa de la mesa seleccionada a 0, y el campo pedido_asociado a Null
+2. Modificar mensajes de agregar_pedido y editar_pedido en mesa donde se ubica el pedido
 
-3. Implementar confirmacion con toast de sweetalert a agregar_pedido y editar_pedido al finalizar una compra
+3. agregar medio de pago por tarjeta agregar_pedido y editar_pedido
+
+4. Agregar iconos de usuario y total a tolltips de mesas ocupadas en index

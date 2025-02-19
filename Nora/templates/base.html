@@ -20,7 +20,12 @@
     <script src="{% static 'datatables/js/datatables.min.js' %}"></script>
     <script src="{% static 'sweetalert2/dist/sweetalert2.all.min.js' %}"></script>
 </head>
-<body class="body">
+<body class="body" data-messages='[
+    {% for message in messages %}
+        {"text": "{{ message|escapejs }}", "type": "{{ message.tags }}"}
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    ]'>
     {% if user.is_authenticated %}
         <!--Menu de navegacion superior-->
         <nav class="navbar bg-navbar border-bottom border-secondary fixed-top">
@@ -215,37 +220,10 @@
 
     <!--Contenido de plantillas-->
     <section class="container-fluid p-3 hv-100">
-        {% block content %}
-        {% endblock %}
-    </section>
-
-    <!--Control de mensajes-->
-    <section>
-        {% if messages %}
-            {% for message in messages %}
-                <script>
-                    Swal.fire({
-                        text: "{{ message|escapejs }}",
-                        icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% elif message.tags == 'info' %}info{% endif %}",
-                        toast: true,
-                        position: "bottom-end", 
-                        showConfirmButton: false, 
-                        timer: 4000, 
-                        timerProgressBar: true, 
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
-                        },
-                        background: "{% if message.tags == 'error' %}#ff4d4d{% elif message.tags == 'success' %}#28a745{% elif message.tags == 'warning' %}#ffb109{% elif message.tags == 'info' %}#17a2b8{% endif %}",
-                        color: "{% if message.tags == 'error' or message.tags == 'success' or message.tags == 'info' %}#fff{% elif message.tags == 'warning' %}#000{% endif %}"
-                    });
-                </script>
-            {% endfor %}
-        {% endif %}
+        {% block content %}{% endblock %}
     </section>
 
     <script src="{% static 'js/main.js' %}"></script>
-    {% block extra_js %}
-    {% endblock %}
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

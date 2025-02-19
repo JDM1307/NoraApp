@@ -42,9 +42,9 @@
                     <div class="row p-0">
                         <div class="col"></div>
                         <div class="input-group col">
-                            <span class="input-group-text border border-success bg-dark text-success" id="basic-addon2">$</span>
-                            <input type="text" class="form-control text-success total-tabla border border-success" name="total_pedido" id="total-tabla" readonly>
-                            <span class="input-group-text border border-success bg-dark text-success" id="basic-addon2">Total</span>
+                            <span class="input-group-text border border-primary bg-dark text-primary" id="basic-addon2">$</span>
+                            <input type="text" class="form-control total-tabla border border-primary bg-secondary-subtle" name="total_pedido" id="total-tabla" readonly>
+                            <span class="input-group-text border border-primary bg-dark text-primary" id="basic-addon2">Total</span>
                         </div>
                     </div>
                 </div>
@@ -86,12 +86,12 @@
                             <span class="badge text-bg-danger text-wrap">Grupos de productos</label>
                         </h3>
                     </header>
-                    <footer class="card-body d-flex justify-content-center" style="overflow-y: auto;">
-                        <div class="row row-cols-lg-3">
+                    <footer class="card-body" style="overflow-y: auto;">
+                        <div class="row row-cols-3">
                             {% for grupo in grupos %}
-                                <div class="col d-flex justify-content-center">
+                                <div class="col d-flex justify-content-center mb-4">
                                     <button 
-                                        class="btn btn-primary square-btn mb-2" 
+                                        class="btn btn-custom rectangle-btn" 
                                         type="button" 
                                         data-bs-toggle="offcanvas" 
                                         data-bs-target="#offcanvasGrupo{{ grupo.id }}" 
@@ -115,7 +115,7 @@
                     aria-labelledby="offcanvasGrupoLabel{{ grupo.id }}">
                     <div class="offcanvas-header">
                         <h5 class="offcanvas-title text-light" id="offcanvasGrupoLabel{{ grupo.id }}">{{ grupo.nombre_grupo }}</h5>
-                        <fieldset class="form-group ms-1 me-1">
+                        <fieldset class="form-group ms-2 me-1">
                             <div class="input-group">
                                 <input type="text" class="form-control filtro-productos" placeholder="Buscar producto...">
                                 <button class="btn btn-danger" type="button" id="button-addon1"  
@@ -126,14 +126,15 @@
                         </fieldset>
                         <button type="button" class="btn-close bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="offcanvas-body small row row-cols-4">
+                    <div class="offcanvas-body small row row-cols-4 pt-0">
                         {% for producto in productos %}
                             {% if producto.grupo_id == grupo.id %}
                                 <button
-                                    class="btn btn-secondary square-btn m-1 producto-btn"
+                                    class="btn btn-secondary square-btn producto-btn ms-2 mb-2"
                                     data-id-producto="{{ producto.id }}"
                                     data-nombre="{{ producto.nombre_producto }}"
                                     data-precio="{{ producto.precio }}"
+                                    data-bs-custom-class="custom-tooltip2"
                                     data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="${{ producto.precio }}">
                                     <span class="badge text-wrap">{{ producto.nombre_producto }}</span>
                                 </button>
@@ -256,13 +257,13 @@
         let nuevoTotal = 0;
         totalTabla.value = nuevoTotal;
 
-        //Funcion: Calcular precio total de productos sleccionados en tabla
+        //FUNCION: Calcular precio total de productos sleccionados en tabla
         const actualizarTotal = (monto) => {
             nuevoTotal += monto;
             totalTabla.value = nuevoTotal;
         };
 
-        //Funcion: agregar o eliminar productos en formulario oculto
+        //FUNCION: agregar o eliminar productos en formulario oculto
         const actualizarProductosForm = (idProducto, cantidad) => {
             const productosActuales = JSON.parse(productosForm.value || '{}');
             if (cantidad > 0) {
@@ -273,7 +274,7 @@
             productosForm.value = JSON.stringify(productosActuales);
         };
 
-        //Funcion: Agregar fila por producto seleccionado (1ra vez)
+        //FUNCION: Agregar fila por producto seleccionado (1ra vez)
         const crearFilaProducto = (idProducto, nombreProducto, precioUnitario, cantidad = 1) => {
             const nuevaFila = document.createElement('tr');
             nuevaFila.innerHTML = `
@@ -291,7 +292,7 @@
             asignarEventosFila(nuevaFila, idProducto, precioUnitario);
         };
 
-        //Funcion: eventos de botones (agregar, restar y eliminar) por fila
+        //FUNCION: eventos de botones (agregar, restar y eliminar) por fila
         const asignarEventosFila = (fila, idProducto, precioUnitario) => {
             const cantidadCell = fila.querySelector('.producto-cantidad');
             const precioCell = fila.querySelector('.producto-precio');
@@ -332,7 +333,7 @@
             });
         };
 
-        //Funcion: Obtencion de producto, precio y nombre al seleccionar producto
+        //FUNCION: Obtencion de producto, precio y nombre al seleccionar producto
         const manejarProductoSeleccionado = (btn) => {
             const idProducto = btn.getAttribute('data-id-producto');
             const nombreProducto = btn.getAttribute('data-nombre');
@@ -362,7 +363,7 @@
             }
         };
 
-        //Evento: Seleccionar producto y aplicar funcionalidad
+        //EVENTO: Seleccionar producto y aplicar funcionalidad
         productoBtns.forEach(btn => {
             btn.addEventListener('click', () => manejarProductoSeleccionado(btn));
         });

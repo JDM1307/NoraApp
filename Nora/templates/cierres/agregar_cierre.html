@@ -3,31 +3,17 @@
 {% block content %}
 {% load humanize %}
 <main class="d-flex flex-column justify-content-start align-items-center">
-    <!--Fecha de cierre-->
-    <section class="card text-bg-secondary mb-3">
-        <header class="card-header">
-            <div class="d-flex justify-content-between">
-                <h3>Agregar Cierre de Caja</h3>
-                <a class="btn btn-warning d-flex align-items-center ms-2" href="{% url 'index' %}">
-                    <i class="bi bi-arrow-90deg-left me-2"></i> Volver
-                </a>
-            </div>
-        </header>
-        <div class="card-body">
-            <form method="get" action="">
-                <div class="d-flex justify-content-start flex-wrap">
-                    <fieldset class="m-2">
-                        <label class="form-label">Fecha Actual</label>
-                        <input class="form-control" type="text" value="{{ fecha_inicio }}" readonly>
-                    </fieldset>
-                </div>
-            </form>
-        </div>
-    </section>
     <!--Tabla Base-->
     <section class="card text-bg-secondary p-3">
         <header class="card-header">
-            <h3>Arqueo de Caja</h3>
+            <div class="d-flex justify-content-between">
+                <h3>Agregar Cierre de Caja</h3>
+                <a class="btn btn-danger" href="{% url 'gestionar_cierres' %}">Cancelar</a>
+            </div>
+            <fieldset class="m-2">
+                <label class="form-label">Fecha Actual</label>
+                <input class="form-control" type="text" value="{{ fecha_inicio }}" readonly>
+            </fieldset>
         </header>
         <div class="card-body">
             <form method="post">
@@ -71,23 +57,18 @@
                         <tr>
                             <td class="bg-success-subtle text-dark"><strong>Validar Caja</strong></td>
                             <td class="bg-success-subtle">
-                                <input id="us_caja" type="number" value="0" class="form-control border border-success text-success" name="us_caja" required>
+                                <input placeholder="Digite un valor" id="us_caja" type="number" class="form-control border border-success text-success" name="us_caja" required>
                             </td>
                         </tr>
                         <tr>
                             <td><strong>Observaciones</strong></td>
                             <td><textarea class="form-control" id="observacion" name="obs_cierre" placeholder="Digite una observación">(Ninguna)</textarea></td>
                         </tr>
-                        <tr class="text-center">
-                            <td>
-                                <a class="btn btn-danger" href="{% url 'gestionar_cierres' %}">Cancelar</a>
-                            </td>
-                            <td>
-                                <button class="btn btn-success save-btn" type="button">Grabar</button>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
+                <fieldset class="d-flex justify-content-end">
+                    <button class="btn btn-success save-btn" type="button">Grabar</button>
+                </fieldset>
             </form>
         </div>
     </section>

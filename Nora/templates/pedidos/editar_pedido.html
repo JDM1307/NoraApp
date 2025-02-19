@@ -59,10 +59,10 @@
                     <div class="row p-0">
                         <div class="col"></div>
                         <div class="input-group col">
-                            <span class="input-group-text border border-success bg-dark text-success" id="basic-addon2">$</span>
-                            <input type="text" class="form-control text-success total-tabla border border-success" 
+                            <span class="input-group-text border border-primary bg-dark text-primary" id="basic-addon2">$</span>
+                            <input type="text" class="form-control total-tabla border border-primary bg-primary-subtle"
                             name="total_pedido" value="{{ pedido.total_pedido }}" id="total-tabla" readonly>
-                            <span class="input-group-text border border-success bg-dark text-success" id="basic-addon2">Total</span>
+                            <span class="input-group-text border border-primary bg-dark text-primary" id="basic-addon2">Total</span>
                         </div>
                     </div>
                 </div>
@@ -70,6 +70,7 @@
                 <footer class="card-footer bg-dark">
                     <form class="d-flex justify-content-between" action="{% url 'editar_pedido' pedido.numero_pedido %}" method="post">
                         {% csrf_token %}
+                        <input type="hidden" id="mesa" name="mesa" value="{{ mesa_seleccionada }}">
                         <input id="productos-form" name="productos" value="{{ productos_actuales }}" type="hidden">
                         <input class="btn-check" type="checkbox" name="estado" value="{{ pedido.estado_pedido }}" id="guardar" style="display:none;">
                         
@@ -89,7 +90,7 @@
                         </fieldset>
                         <fieldset>
                             <button class="btn btn-primary" type="submit" id="btn-guardar">
-                                Guardar
+                                Actualizar
                             </button>
                         </fieldset>
                     </form>
@@ -103,12 +104,12 @@
                             <span class="badge text-bg-danger text-wrap">Grupos de productos</span>
                         </h3>
                     </header>
-                    <footer class="card-body d-flex justify-content-center"style="overflow-y: auto;">
-                        <div class="row row-cols-lg-3">
+                    <footer class="card-body"style="overflow-y: auto;">
+                        <div class="row row-cols-3">
                             {% for grupo in grupos %}
-                                <div class="col d-flex justify-content-center">
+                                <div class="col d-flex justify-content-center mb-4">
                                     <button
-                                        class="btn btn-primary square-btn mb-2"
+                                        class="btn btn-custom rectangle-btn"
                                         type="button"
                                         data-bs-toggle="offcanvas"
                                         data-bs-target="#offcanvasGrupo{{ grupo.id }}"
@@ -132,7 +133,7 @@
                     aria-labelledby="offcanvasGrupoLabel{{ grupo.id }}">
                     <div class="offcanvas-header">
                         <h5 class="offcanvas-title text-light" id="offcanvasGrupoLabel{{ grupo.id }}">{{ grupo.nombre_grupo }}</h5>
-                        <fieldset class="form-group ms-1 me-1">
+                        <fieldset class="form-group ms-2 me-1">
                             <div class="input-group">
                                 <input type="text" class="form-control filtro-productos" placeholder="Buscar producto...">
                                 <button class="btn btn-danger" type="button" id="button-addon1"  
@@ -143,11 +144,11 @@
                         </fieldset>
                         <button type="button" class="btn-close bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="offcanvas-body small row row-cols-4">
+                    <div class="offcanvas-body small row row-cols-4 pt-0">
                         {% for producto in productos %}
                             {% if producto.grupo_id == grupo.id %}
                                 <button
-                                    class="btn btn-secondary square-btn m-1 producto-btn"
+                                    class="btn btn-secondary square-btn producto-btn ms-2 mb-2"
                                     data-id-producto="{{ producto.id }}"
                                     data-nombre="{{ producto.nombre_producto }}"
                                     data-precio="{{ producto.precio }}""
@@ -236,9 +237,9 @@
         guardar.checked = true;
 
         const config = {
-            "efectivo": { icon: "bi bi-bag-check", text: "COBRAR", color: "btn-success" },
-            "nequi": { icon: "bi bi-wallet2", text: "COBRAR", color: "btn-success" },
-            "davip": { icon: "bi bi-credit-card", text: "COBRAR", color: "btn-success" }
+            "efectivo": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" },
+            "nequi": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" },
+            "davip": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" }
         };
 
         checkboxes.forEach(checkbox => {
@@ -261,7 +262,7 @@
         });
 
         function resetButton() {
-            btnGuardar.innerHTML = `<i class="bi bi-floppy me-1"></i>Guardar`;
+            btnGuardar.innerHTML = `Actualizar`;
             btnGuardar.className = "btn btn-primary";
         }
 
@@ -343,7 +344,7 @@
             });
         };
 
-        // Llamar a la funcion para inicializar las filas ya existentes
+        //FUNCION: para inicializar las filas ya existentes
         inicializarFilasExistentes();
 
         //FUNCION: Agregar fila por producto seleccionado (1ra vez)
@@ -352,7 +353,7 @@
             nuevaFila.innerHTML = `
                 <td class="producto-cantidad text-center">${cantidad}</td>
                 <td class="producto-nombre text-center">${nombreProducto}</td>
-                <td class="producto-precio text-center">${precioUnitario * cantidad}</td>
+                <td class="producto-precio text-center">$${precioUnitario * cantidad}</td>
                 <td class="text-center">
                     <button class="btn btn-success btn-sm add-btn">+</button>
                     <button class="btn btn-warning btn-sm restar-btn">-</button>
@@ -394,7 +395,7 @@
             }
         };
 
-        //Evento: Seleccionar producto y aplicar funcionalidad
+        //EVENTO: Seleccionar producto y aplicar funcionalidad
         productoBtns.forEach(btn => {
             btn.addEventListener('click', () => manejarProductoSeleccionado(btn));
         });

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Agregar Mesa{% endblock %}
 {% block content %}
-<main>
+<main class="d-flex justify-content-center align-items-center flex-column">
     <section class="card text-bg-secondary mb-3">
         <header class="card-header">
             <h3>Agregar Grupo</h3>
@@ -9,19 +9,15 @@
         <footer class="card-body">
             <form method="post">
                 {% csrf_token %}
-                <div class="d-flex justify-content-start">
+                <div class="d-flex flex-column">
                     <fieldset class="m-2">
                         <label class="form-label" for="nombre_grupo">Nombre de grupo:</label>
                         <input class="form-control" type="text" id="nombre_grupo" name="nombre_grupo"
                          value="{{ grupo.nombre_grupo }}" placeholder="Digite un nombre" required>
                     </fieldset>
-                    <div class="d-flex align-items-end">
-                        <fieldset class="m-2">
-                            <button class="btn btn-success" type="submit">Guardar</button>
-                        </fieldset>
-                        <fieldset class="m-2">
-                            <a class="btn btn-danger" href="{% url 'gestionar_grupos' %}">Cancelar</a>
-                        </fieldset>
+                    <div class="d-flex align-items-center justify-content-between m-2">
+                        <button class="btn btn-success" type="submit">Guardar</button>
+                        <a class="btn btn-danger" href="{% url 'gestionar_grupos' %}">Cancelar</a>
                     </div>
                 </div>
             </form>

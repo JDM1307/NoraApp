@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     #Index
     path('', views.index, name='index'),
+    path('api/mesas/', views.obtener_mesas, name='obtener_mesas'),
 
     #Base
     path('bases/', views.gestionar_bases, name='gestionar_bases'),

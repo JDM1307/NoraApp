@@ -47,15 +47,13 @@ class Producto(models.Model):
 #Mesas
 class Mesa(models.Model):
     numero_mesa = models.IntegerField(unique=True)
+    estado_mesa = models.IntegerField(null=True)
+    pedido_asociado = models.IntegerField(null=True)
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.numero_mesa
-    
-    @property
-    def esta_ocupada(self):
-        return self.pedidos.filter(estado_pedido=1).exists()
+        return self.numero_mesa, self.estado_mesa, self.pedido_asociado
 
 #Pedidos
 class Pedido(models.Model):

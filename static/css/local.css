@@ -18,14 +18,16 @@
     background: #0C6478;
 }
 
-/* Ocultar los spinners en navegadores basados en WebKit */
+
+/* Personalizacion de inputs number (sin incrementador o decrementador) */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-/*personalizacion body*/
+
+/*Personalizacion body*/
 body {
     background-color: #1e272e;
     height: 100vh;
@@ -35,42 +37,83 @@ body {
     font-family: 'Arial', sans-serif;
 }
 
-/*personalizacion offcanvas menu lateral derecho*/
+
+/*Personalizacion offcanvas menu lateral derecho*/
 .offcanvas-end {
     width: 250px !important;
 }
 
-/*personalizacion offcanvas menu de productos*/
+
+/*Personalizacion offcanvas menu de productos*/
 .offcanvas-bottom {
     height: 250px !important;
 }
 
-/*personalizcion hover en barras y mesas*/
+
+/*Personalizcion hover en barras y mesas*/
 .card-hover:hover{
     border:#fff 1px solid;
 }
 
-/*personalizacion color fondo de navbar*/
+
+/*Personalizacion color fondo de navbar*/
 .bg-navbar{
     background-color: #0C6478;
 }
 
-/*personalizacion borde para cada boton*/
+
+/*Personalizacion borde para cada boton*/
 .btn{
     border: #080808 1px solid;
 }
 
-/*Hover para cada boton*/
+
+/*Personalizacion hover para cada boton*/
 .btn:hover{
     border: #fff 1px solid;
 }
 
-/*personalizacion para contenedor de texto: version*/
+
+/*Personalizacion para contenedor de texto version en Login*/
 .version{
         width: 100%;
         max-width: 400px;
         height: 10px;
 }
+
+@-webkit-keyframes tracking-in-contract {
+        0% {
+          letter-spacing: 1em;
+          opacity: 0;
+        }
+        40% {
+          opacity: 0.6;
+        }
+        100% {
+          letter-spacing: normal;
+          opacity: 1;
+        }
+      }
+      @keyframes tracking-in-contract {
+        0% {
+          letter-spacing: 1em;
+          opacity: 0;
+        }
+        40% {
+          opacity: 0.6;
+        }
+        100% {
+          letter-spacing: normal;
+          opacity: 1;
+        }
+      }
+      
+.tracking-in-contract {
+	-webkit-animation: tracking-in-contract 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) 1s both;
+	        animation: tracking-in-contract 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) 1s both;
+}
+
+
 
 /*Personalizacon de Login*/
 .card-login {
@@ -82,12 +125,123 @@ body {
     box-shadow: 0 0 10px rgba(6, 6, 6, 0.87);
 }
 
-/*Personalizacion de bordes para campos de entrada*/
+@-webkit-keyframes bounce-in-top {
+        0% {
+          -webkit-transform: translateY(-500px);
+                  transform: translateY(-500px);
+          -webkit-animation-timing-function: ease-in;
+                  animation-timing-function: ease-in;
+          opacity: 0;
+        }
+        38% {
+          -webkit-transform: translateY(0);
+                  transform: translateY(0);
+          -webkit-animation-timing-function: ease-out;
+                  animation-timing-function: ease-out;
+          opacity: 1;
+        }
+        55% {
+          -webkit-transform: translateY(-65px);
+                  transform: translateY(-65px);
+          -webkit-animation-timing-function: ease-in;
+                  animation-timing-function: ease-in;
+        }
+        72% {
+          -webkit-transform: translateY(0);
+                  transform: translateY(0);
+          -webkit-animation-timing-function: ease-out;
+                  animation-timing-function: ease-out;
+        }
+        81% {
+          -webkit-transform: translateY(-28px);
+                  transform: translateY(-28px);
+          -webkit-animation-timing-function: ease-in;
+                  animation-timing-function: ease-in;
+        }
+        90% {
+          -webkit-transform: translateY(0);
+                  transform: translateY(0);
+          -webkit-animation-timing-function: ease-out;
+                  animation-timing-function: ease-out;
+        }
+        95% {
+          -webkit-transform: translateY(-8px);
+                  transform: translateY(-8px);
+          -webkit-animation-timing-function: ease-in;
+                  animation-timing-function: ease-in;
+        }
+        100% {
+          -webkit-transform: translateY(0);
+                  transform: translateY(0);
+          -webkit-animation-timing-function: ease-out;
+                  animation-timing-function: ease-out;
+        }
+      }
+      @keyframes bounce-in-top {
+        0% {
+          -webkit-transform: translateY(-500px);
+                  transform: translateY(-500px);
+          -webkit-animation-timing-function: ease-in;
+                  animation-timing-function: ease-in;
+          opacity: 0;
+        }
+        38% {
+          -webkit-transform: translateY(0);
+                  transform: translateY(0);
+          -webkit-animation-timing-function: ease-out;
+                  animation-timing-function: ease-out;
+          opacity: 1;
+        }
+        55% {
+          -webkit-transform: translateY(-65px);
+                  transform: translateY(-65px);
+          -webkit-animation-timing-function: ease-in;
+                  animation-timing-function: ease-in;
+        }
+        72% {
+          -webkit-transform: translateY(0);
+                  transform: translateY(0);
+          -webkit-animation-timing-function: ease-out;
+                  animation-timing-function: ease-out;
+        }
+        81% {
+          -webkit-transform: translateY(-28px);
+                  transform: translateY(-28px);
+          -webkit-animation-timing-function: ease-in;
+                  animation-timing-function: ease-in;
+        }
+        90% {
+          -webkit-transform: translateY(0);
+                  transform: translateY(0);
+          -webkit-animation-timing-function: ease-out;
+                  animation-timing-function: ease-out;
+        }
+        95% {
+          -webkit-transform: translateY(-8px);
+                  transform: translateY(-8px);
+          -webkit-animation-timing-function: ease-in;
+                  animation-timing-function: ease-in;
+        }
+        100% {
+          -webkit-transform: translateY(0);
+                  transform: translateY(0);
+          -webkit-animation-timing-function: ease-out;
+                  animation-timing-function: ease-out;
+        }
+      }
+      
+    .bounce-in-top {
+            -webkit-animation: bounce-in-top 0.8s both;
+                    animation: bounce-in-top 0.8s both;
+    }
+
+/*Personalizacion de bordes para inputs (campos de entrada)*/
 input, select, textarea{
     border: #080808 1px solid !important;
 }
 
-/*personalizacion de botones productos en Agregar Pedido*/
+
+/*Personalizacion de botones productos en Agregar Pedido y Editar Pedido*/
 .square-btn {
     width: 100px; 
     height: 100px;
@@ -99,6 +253,21 @@ input, select, textarea{
     white-space: normal; 
 }
 
+
+/*Personalizacion de botones grupos en Agregar Pedido y Editar Pedido*/
+.rectangle-btn {
+        width: 100px; 
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden; 
+        white-space: normal; 
+    }
+
+
+/*Personalizacion texto Nora en Login*/
 .nora{
         width: 100%;
         max-width: 400px;
@@ -107,7 +276,6 @@ input, select, textarea{
         text-shadow: #000000 0px 3px 3px;
 }
 
-/*Animacion para letras NORA login*/
 @-webkit-keyframes text-focus-in {
         0% {
           -webkit-filter: blur(12px);
@@ -143,151 +311,8 @@ input, select, textarea{
 	        animation: text-focus-in 2s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
 }
 
-/*animacion para software version login*/
-@-webkit-keyframes tracking-in-contract {
-        0% {
-          letter-spacing: 1em;
-          opacity: 0;
-        }
-        40% {
-          opacity: 0.6;
-        }
-        100% {
-          letter-spacing: normal;
-          opacity: 1;
-        }
-      }
-      @keyframes tracking-in-contract {
-        0% {
-          letter-spacing: 1em;
-          opacity: 0;
-        }
-        40% {
-          opacity: 0.6;
-        }
-        100% {
-          letter-spacing: normal;
-          opacity: 1;
-        }
-      }
-      
-.tracking-in-contract {
-	-webkit-animation: tracking-in-contract 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) 1s both;
-	        animation: tracking-in-contract 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) 1s both;
-}
 
-/*Animacion para card login*/
-@-webkit-keyframes bounce-in-top {
-    0% {
-      -webkit-transform: translateY(-500px);
-              transform: translateY(-500px);
-      -webkit-animation-timing-function: ease-in;
-              animation-timing-function: ease-in;
-      opacity: 0;
-    }
-    38% {
-      -webkit-transform: translateY(0);
-              transform: translateY(0);
-      -webkit-animation-timing-function: ease-out;
-              animation-timing-function: ease-out;
-      opacity: 1;
-    }
-    55% {
-      -webkit-transform: translateY(-65px);
-              transform: translateY(-65px);
-      -webkit-animation-timing-function: ease-in;
-              animation-timing-function: ease-in;
-    }
-    72% {
-      -webkit-transform: translateY(0);
-              transform: translateY(0);
-      -webkit-animation-timing-function: ease-out;
-              animation-timing-function: ease-out;
-    }
-    81% {
-      -webkit-transform: translateY(-28px);
-              transform: translateY(-28px);
-      -webkit-animation-timing-function: ease-in;
-              animation-timing-function: ease-in;
-    }
-    90% {
-      -webkit-transform: translateY(0);
-              transform: translateY(0);
-      -webkit-animation-timing-function: ease-out;
-              animation-timing-function: ease-out;
-    }
-    95% {
-      -webkit-transform: translateY(-8px);
-              transform: translateY(-8px);
-      -webkit-animation-timing-function: ease-in;
-              animation-timing-function: ease-in;
-    }
-    100% {
-      -webkit-transform: translateY(0);
-              transform: translateY(0);
-      -webkit-animation-timing-function: ease-out;
-              animation-timing-function: ease-out;
-    }
-  }
-  @keyframes bounce-in-top {
-    0% {
-      -webkit-transform: translateY(-500px);
-              transform: translateY(-500px);
-      -webkit-animation-timing-function: ease-in;
-              animation-timing-function: ease-in;
-      opacity: 0;
-    }
-    38% {
-      -webkit-transform: translateY(0);
-              transform: translateY(0);
-      -webkit-animation-timing-function: ease-out;
-              animation-timing-function: ease-out;
-      opacity: 1;
-    }
-    55% {
-      -webkit-transform: translateY(-65px);
-              transform: translateY(-65px);
-      -webkit-animation-timing-function: ease-in;
-              animation-timing-function: ease-in;
-    }
-    72% {
-      -webkit-transform: translateY(0);
-              transform: translateY(0);
-      -webkit-animation-timing-function: ease-out;
-              animation-timing-function: ease-out;
-    }
-    81% {
-      -webkit-transform: translateY(-28px);
-              transform: translateY(-28px);
-      -webkit-animation-timing-function: ease-in;
-              animation-timing-function: ease-in;
-    }
-    90% {
-      -webkit-transform: translateY(0);
-              transform: translateY(0);
-      -webkit-animation-timing-function: ease-out;
-              animation-timing-function: ease-out;
-    }
-    95% {
-      -webkit-transform: translateY(-8px);
-              transform: translateY(-8px);
-      -webkit-animation-timing-function: ease-in;
-              animation-timing-function: ease-in;
-    }
-    100% {
-      -webkit-transform: translateY(0);
-              transform: translateY(0);
-      -webkit-animation-timing-function: ease-out;
-              animation-timing-function: ease-out;
-    }
-  }
-  
-.bounce-in-top {
-	-webkit-animation: bounce-in-top 0.8s both;
-	        animation: bounce-in-top 0.8s both;
-}
-
-/*Efecto para lestras NORA index*/
+/*Personalizacion texto NORA en index*/
 
 .home {
         display:block;
@@ -328,7 +353,7 @@ input, select, textarea{
 }
 
 
-/*Personalizacion botones de sweetalert*/
+/*Personalizacion botones confirmar/cancelar de sweetalert*/
 .swal2-confirm {
         background-color: #28a745 !important; /* Verde */
         color: white !important;
@@ -343,4 +368,45 @@ input, select, textarea{
         border-radius: 8px;
         padding: 10px 20px;
         font-size: 16px;
+    }
+
+
+/* Personalizacion Tooltip para mesas ocupadas */
+.custom-tooltip {
+        --bs-tooltip-bg: #dc3545;
+        --bs-tooltip-color: #FFF;
+      }
+
+/* Personalizacion Tooltip para mesas desocupadas */
+.custom-tooltip2 {
+        --bs-tooltip-bg: #000;
+        --bs-tooltip-color: #FFF;
+      }
+
+/*Personalizacion bordes de Tooltips mesas*/
+.custom-tooltip .tooltip-inner, .custom-tooltip2 .tooltip-inner {
+        border: 0.5px solid #fff; /* Borde negro */
+    }
+
+
+/*Personalizacion de Boton generico*/
+.btn-custom {
+        background-color: #0C6478; /* Color de fondo */
+        color: #fff; /* Color del texto */
+        border: 1px solid #000; /* Borde similar al fondo pero más oscuro */
+        transition: all 0.3s ease-in-out; /* Efecto de transición */
+    }
+    
+    .btn-custom:hover {
+        background-color: #094F5D; /* Color de fondo más oscuro en hover */
+        color: #fff; /* Mantiene el color del texto */
+        border-color: #083E4A; /* Borde más oscuro en hover */
+    }
+    
+    .btn-custom:active,
+    .btn-custom:focus {
+        background-color: #083E4A; /* Más oscuro al presionar */
+        color: #fff;
+        border-color: #062E36;
+        box-shadow: 0 0 0 0.2rem rgba(12, 100, 120, 0.5); /* Efecto de sombra Bootstrap */
     }
