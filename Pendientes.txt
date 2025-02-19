@@ -2,8 +2,11 @@ POR IMPLEMENTAR:
 
 1. Implementar confirmacion con toast de sweetalert a agregar_pedido y editar_pedido al finalizar una compra
 
-2. Modificar mensajes de agregar_pedido y editar_pedido en mesa donde se ubica el pedido
+2. Personalizar los mensajes de retorno para cada vista
 
 3. agregar medio de pago por tarjeta agregar_pedido y editar_pedido
 
-4. Agregar iconos de usuario y total a tolltips de mesas ocupadas en index
+4. Agregar iconos de usuario y total a mesas ocupadas en index (usar badges)
+
+
+

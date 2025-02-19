@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Agregar Cierre{% endblock %}
 {% block content %}
-{% load humanize %}
-<main class="d-flex flex-column justify-content-start align-items-center">
-    <!--Tabla Base-->
+<body  data-page="agregar_cierre" data-key_create="crear_cierre" data-info="Finalizando turno">
+    <main class="d-flex flex-column justify-content-start align-items-center">
+    <!--Tabla agregar arqueo-->
     <section class="card text-bg-secondary p-3">
         <header class="card-header">
             <div class="d-flex justify-content-between">
@@ -57,7 +57,7 @@
                         <tr>
                             <td class="bg-success-subtle text-dark"><strong>Validar Caja</strong></td>
                             <td class="bg-success-subtle">
-                                <input placeholder="Digite un valor" id="us_caja" type="number" class="form-control border border-success text-success" name="us_caja" required>
+                                <input placeholder="Digite un valor" type="number" class="valor form-control border border-success text-success" name="us_caja" required>
                             </td>
                         </tr>
                         <tr>
@@ -67,58 +67,12 @@
                     </tbody>
                 </table>
                 <fieldset class="d-flex justify-content-end">
-                    <button class="btn btn-success save-btn" type="button">Grabar</button>
+                    <button class="btn btn-success save-btn" type="button" 
+                    data-msj_create="Está seguro de grabar este cierre en:">Grabar</button>
                 </fieldset>
             </form>
         </div>
     </section>
 </main>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {    
-        $(document).ready(function () {
-                    // Inicializar DataTables
-                    $('#tabla-arqueo').DataTable({
-                        responsive: true,
-                        paging: false,        
-                        searching: false,    
-                        ordering: false,      
-                        info: true,           
-                        select: true,
-                        language: {
-                            select: {
-                                rows: {
-                                    1: "1 fila seleccionada"
-                                }
-                            },
-                            processing: "Procesando...",
-                            info: "Finalizando turno",
-                        },
-                    });
-                });
-    });
-
-    //sweetalert grabar cierre
-    document.querySelector(".save-btn").addEventListener("click", function (e) {
-            e.preventDefault();
-            let form = this.closest("form"); // Obtiene el formulario más cercano
-            let cierre = document.getElementById("us_caja");
-            valorCierre = cierre.value;
-
-            Swal.fire({
-                text: `¿Esta seguro de grabar el cierre de caja en: $${valorCierre}?`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Sí, guardar",
-                cancelButtonText: "Cancelar",
-                background: "#1e272e",
-                color: "#f8f9fa",
-                width: "300px"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit(); // Envía el formulario si el usuario confirma
-                }
-            });
-        });
-</script>
+</body>
 {% endblock %}

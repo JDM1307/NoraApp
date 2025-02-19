@@ -1,21 +1,26 @@
 document.addEventListener('DOMContentLoaded', function () {
     /*Asignacion de datasets*/
-        const messages = document.body.dataset.messages;
         const page = document.body.dataset.page;
-        let url =  document.body.dataset.url;
+        const messages = document.body.dataset.messages;
+        const info = document.body.dataset.info;
+        const url =  document.body.dataset.url;
+        const key_create = document.body.dataset.key_create;
+        const key_delete = document.body.dataset.key_delete;
         
     
     /*Debbuggin*/
         console.log("Ejecutando script en:", page);
+        //console.log("key_create:", key_create)
+        //console.log("key_delete:", key_delete);
 
 
-    /*base.html*/
+    /*General*/
         // Inicializar tooltips
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.forEach(function (tooltipTriggerEl) {
             new bootstrap.Tooltip(tooltipTriggerEl);
         });
-        //Personalizacion datatables por defecto
+        //Personalizacion datatables por defecto (bases, grupos, mesas, productos, retiros)
         $(document).ready(function () {
             $('#mi-tabla').DataTable({
                 responsive: true,
@@ -93,6 +98,103 @@ document.addEventListener('DOMContentLoaded', function () {
             function getTextColor(type) {
                 return type === "warning" ? "#000" : "#fff";
             }
+        //Personalizacion datatables para arqueos (arqueos, cierres)
+        if (page === "arqueos" || page === "agregar_cierre"){
+            $(document).ready(function () {
+                // Inicializar DataTables
+                $('#tabla-arqueo').DataTable({
+                    responsive: true,
+                    paging: false,        
+                    searching: false,    
+                    ordering: false,      
+                    info: true,           
+                    select: true,
+                    language: {
+                        select: {
+                            rows: {
+                                1: "1 fila seleccionada"
+                            }
+                        },
+                        processing: "Procesando...",
+                        search: "Buscar:",
+                        info: `${info}`,
+                    },
+                });
+            });
+        }
+
+        //Funcionalidad confirmacion/cancelacion para eliminar un registro
+        if (page && key_delete) {
+            delete_elements()    
+        }
+            //Toast sweetalert2 para eliminar elementos
+            function delete_elements() {
+                document.querySelectorAll(".delete-btn").forEach(button => {
+                    button.addEventListener("click", function (e) {
+                        e.preventDefault();
+            
+                        let deleteUrl = this.dataset.delete_url;
+                        let confirmMessage = this.dataset.msj_delete || "¿Estás seguro de eliminar este elemento?";
+            
+                        const Toast = Swal.mixin({
+                            toast: false,
+                            position: "center",
+                            showConfirmButton: true,
+                            showCancelButton: true,
+                            confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
+                            cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                            customClass: {
+                                confirmButton: "swal2-confirm",
+                                cancelButton: "swal2-cancel"
+                            },
+                            timer: 10000,
+                            timerProgressBar: true,
+                            icon: "warning",
+                            background: "#1e272e",
+                            color: "#f8f9fa",
+                            width: "300px"
+                        });
+            
+                        Toast.fire({
+                            text: confirmMessage,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = deleteUrl;
+                            }
+                        });
+                    });
+                });
+            }
+        //Funcionalidad confirmacion/cancelacion para crear un registro
+        if (page && key_create){
+            create_elements()
+        }
+            //Toast sweetalert2 para crear elementos
+            function create_elements() { 
+                document.querySelector(".save-btn").addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    let confirmMessage = this.dataset.msj_create || "¿Estás seguro de grabar este elemento?";
+                    let form = this.closest("form"); // Obtiene el formulario más cercano
+                    let valor = document.querySelector(".valor");
+                    valueConfirm = valor.value || " ";
+        
+                    Swal.fire({
+                        text: `¿${confirmMessage} $${valueConfirm}?`,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="bi bi-check-circle"></i> Guardar',
+                        cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                        background: "#1e272e",
+                        color: "#f8f9fa",
+                        width: "300px"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Envía el formulario si el usuario confirma
+                        }
+                    });
+                });
+            }
 
 
     /*login.html*/
@@ -116,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             }
+
 
     /*index.html*/
         let mesaInterval = null; 
@@ -153,5 +256,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /*gestionar_mesas.html*/
-            
+        
 });

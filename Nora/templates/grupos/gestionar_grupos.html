@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Grupos{% endblock %}
 {% block content %}
-<main>
+<body data-page="gestionar_grupos" data-key_delete="eliminar_grupos">
     <!--Filtros y agregar Grupos-->
     <section class="card text-bg-secondary mb-3">
         <header class="card-header">
@@ -49,7 +49,8 @@
                             </a>
                             <a class="btn btn-sm btn-danger delete-btn"
                             data-id="{{ grupo.id }}"
-                            data-name="{{ grupo.nombre_grupo }}"
+                            data-delete_url="eliminar/{{ grupo.id }}/"
+                            data-msj_delete="¿Está seguro que desea eliminar el grupo: {{ grupo.nombre_grupo }}?"
                             data-bs-toggle="tooltip" 
                             data-bs-placement="right" 
                             data-bs-title="Eliminar">
@@ -61,45 +62,5 @@
             </tbody>
         </table>
     </section>
-</main>
-
-<script>
-     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".delete-btn").forEach(button => {
-            button.addEventListener("click", function (e) {
-                e.preventDefault();
-                let grupoId = this.getAttribute("data-id");
-                let grupoName = this.getAttribute("data-name");
-                let deleteUrl = `eliminar/${grupoId}/`;
-
-                const Toast = Swal.mixin({
-                    toast: false,
-                    position: "center",
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
-                    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
-                    customClass: {
-                        confirmButton: "swal2-confirm",
-                        cancelButton: "swal2-cancel"
-                    },
-                    timer: 10000,
-                    timerProgressBar: true,
-                    icon: "warning",
-                    background: "#1e272e",
-                    color: "#f8f9fa",
-                    width: "300px"
-                });
-
-                Toast.fire({
-                    text: `¿Seguro que deseas eliminar el grupo: "${grupoName}"?`,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = deleteUrl;
-                    }
-                });
-            });
-        });
-    });
-</script>
+</body>
 {% endblock %}

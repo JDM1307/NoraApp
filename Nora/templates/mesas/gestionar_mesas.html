@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Mesas{% endblock %}
 {% block content %}
-<main>
+<body data-page="gestionar-mesas" data-key_delete="eliminar_mesas">
     <!--Filtros y agregar Mesas-->
     <section class="card text-bg-secondary mb-3">
         <header class="card-header">
@@ -48,7 +48,8 @@
                             </a>
                             <a class="btn btn-sm btn-danger delete-btn" 
                                 data-id="{{ mesa.id }}" 
-                                data-num="{{ mesa.numero_mesa }}"
+                                data-delete_url="eliminar/{{ mesa.id }}/"
+                                data-msj_delete="¿Está seguro que desea eliminar la mesa numero: {{ mesa.numero_mesa }}?"
                                 data-bs-toggle="tooltip" 
                                 data-bs-placement="right" 
                                 data-bs-title="Eliminar">
@@ -59,45 +60,5 @@
                 {% endfor %}
         </table>
     </section>
-</article>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".delete-btn").forEach(button => {
-            button.addEventListener("click", function (e) {
-                e.preventDefault();
-                let mesaId = this.getAttribute("data-id");
-                let mesaNum = this.getAttribute("data-num");
-                let deleteUrl = `eliminar/${mesaId}/`;
-
-                const Toast = Swal.mixin({
-                    toast: false,
-                    position: "center",
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
-                    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
-                    customClass: {
-                        confirmButton: "swal2-confirm",
-                        cancelButton: "swal2-cancel"
-                    },
-                    timer: 10000,
-                    timerProgressBar: true,
-                    icon: "warning",
-                    background: "#1e272e",
-                    color: "#f8f9fa",
-                    width: "300px"
-                });
-
-                Toast.fire({
-                    text: `¿Seguro que deseas eliminar la mesa #${mesaNum}?`,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = deleteUrl;
-                    }
-                });
-            });
-        });
-    });
-</script>
+</body>
 {% endblock %}

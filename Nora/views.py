@@ -98,37 +98,41 @@ def agregar_base(request):
     if request.method == 'POST':  
         valor = request.POST.get('base_dia')
         observacion = request.POST.get('base_observacion')
-        valor = int(valor)
-        if valor >= 0 and observacion:
-            # Obtener la fecha actual en la zona horaria local
-            hoy = localtime(now()).date()
 
-            # Definir el rango de búsqueda (inicio y fin del día)
-            inicio_dia = make_aware(datetime.combine(hoy, datetime.min.time()))  # 00:00:00
-            fin_dia = make_aware(datetime.combine(hoy, datetime.max.time()))    # 23:59:59
+        # Validar que el valor sea un número y no esté vacío
+        try:
+            valor = int(valor)  # Convertir a entero
+            if valor < 0:  # Verificar que no sea negativo
+                raise ValueError
+        except (ValueError, TypeError):
+            messages.warning(request, 'Ingrese un valor numérico válido para la base.')
+            return redirect('agregar_base')
 
-            # Verificar si el usuario ya tiene una base registrada hoy en este rango
-            existe_base = Base.objects.filter(
-                creado_en__range=(inicio_dia, fin_dia)
-            ).exists()
+        # Obtener la fecha actual en la zona horaria local
+        hoy = localtime(now()).date()
 
-            if existe_base:
-                messages.error(request, "Ya existe una base para hoy")
-                return redirect('index')
+        # Definir el rango de búsqueda (inicio y fin del día)
+        inicio_dia = make_aware(datetime.combine(hoy, datetime.min.time()))  # 00:00:00
+        fin_dia = make_aware(datetime.combine(hoy, datetime.max.time()))    # 23:59:59
 
-            try:
-                base = Base(
-                    base_dia=valor,
-                    base_observacion=observacion,
-                    usuario=request.user
-                )
-                base.save()
-                messages.success(request, "Base grabada exitosamente.")
-                return redirect('index')
-            except Exception as e:
-                messages.error(request, f'Hubo un error: {e}')
-        else:
-            messages.error(request, 'Ingrese un valor valido')
+        # Verificar si el usuario ya tiene una base registrada hoy
+        existe_base = Base.objects.filter(creado_en__range=(inicio_dia, fin_dia)).exists()
+
+        if existe_base:
+            messages.error(request, "Ya existe una base para hoy")
+            return redirect('index')
+
+        try:
+            base = Base(
+                base_dia=valor,  # Ya convertido a entero
+                base_observacion=observacion,
+                usuario=request.user
+            )
+            base.save()
+            messages.success(request, "Base grabada exitosamente.")
+            return redirect('index')
+        except Exception as e:
+            messages.error(request, f'Hubo un error: {e}')
 
     return render(request, 'bases/agregar_base.html')
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Pedidos{% endblock %}
 {% block content %}
-<main>
+<body data-page="gestionar_productos" data-key_delete="eliminar_productos">
     <!--filtros Pedidos-->
     <section class="card text-bg-secondary mb-3">
         <header class="card-header d-flex justify-content-between">
@@ -101,6 +101,8 @@
                                     </a>
                                     <a class="btn btn-sm btn-danger delete-btn"
                                         data-id="{{ pedido.numero_pedido }}"
+                                        data-delete_url="eliminar/{{ pedido.numero_pedido }}/"
+                                        data-msj_delete="¿Está seguro que desea eliminar el pedido: {{ pedido.numero_pedido }}?"
                                         data-bs-toggle="tooltip" 
                                         data-bs-placement="right"
                                         data-bs-title="Eliminar">
@@ -114,44 +116,5 @@
             </tbody>
         </table>
     </section>
-</main>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".delete-btn").forEach(button => {
-            button.addEventListener("click", function (e) {
-                e.preventDefault();
-                let pedidoId = this.getAttribute("data-id");
-                let deleteUrl = `eliminar/${pedidoId}/`;
-
-                const Toast = Swal.mixin({
-                    toast: false,
-                    position: "center",
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
-                    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
-                    customClass: {
-                        confirmButton: "swal2-confirm",
-                        cancelButton: "swal2-cancel"
-                    },
-                    timer: 10000,
-                    timerProgressBar: true,
-                    icon: "warning",
-                    background: "#1e272e",
-                    color: "#f8f9fa",
-                    width: "300px"
-                });
-
-                Toast.fire({
-                    text: `¿Seguro que deseas eliminar el pedido #${pedidoId}?`,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = deleteUrl;
-                    }
-                });
-            });
-        });
-    });
-</script>
+</body>
 {% endblock %}
