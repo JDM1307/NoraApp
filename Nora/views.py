@@ -19,13 +19,14 @@ def login(request):
             if form.is_valid():
                 user = form.get_user()
                 auth_login(request, user)
+                messages.success(request, f'{user.username} Ha iniciado sesion')
+                #Validacion existencia de base
                 hoy = localtime(now()).date()
                 inicio_dia = make_aware(datetime.combine(hoy, datetime.min.time()))  # 00:00:00
                 fin_dia = make_aware(datetime.combine(hoy, datetime.max.time()))    # 23:59:59
                 base_hoy = Base.objects.filter(
                     creado_en__range=(inicio_dia, fin_dia)
                 ).exists()
-                messages.success(request, f'{user.username} Ha iniciado sesion')
                 if base_hoy:
                     return redirect('index')
                 else:
@@ -45,23 +46,12 @@ def login(request):
 def index(request):
     try:
         mesas = Mesa.objects.all().order_by('numero_mesa')
-
-        # Agregar total_pedido y responsable a cada mesa si tiene un pedido asociado
-        for mesa in mesas:
-            if mesa.pedido_asociado:
-                pedido = Pedido.objects.filter(numero_pedido=mesa.pedido_asociado).first()
-                mesa.total_pedido = pedido.total_pedido if pedido else None
-                mesa.responsable = pedido.usuario if pedido else "?"
-            else:
-                mesa.total_pedido = None
-                mesa.responsable = "?"
-
         return render(request, 'index/index.html', {'mesas': mesas})
-
     except Exception as e:
         messages.error(request, f'Ocurrió un error: {e}')
         return render(request, 'errores/error_general.html', {'error_message': str(e)})
 
+@login_required
 def obtener_mesas(request):
     mesas = Mesa.objects.all().order_by('numero_mesa')
     data = []
@@ -72,7 +62,8 @@ def obtener_mesas(request):
             'numero_mesa': mesa.numero_mesa,
             'estado_mesa': mesa.estado_mesa,
             'responsable': pedido.usuario.username if pedido else "?",
-            'total_pedido': pedido.total_pedido if pedido else 0
+            'total_pedido': pedido.total_pedido if pedido else 0,
+            'pedido_asociado': mesa.pedido_asociado if mesa.pedido_asociado else None
         })
 
     return JsonResponse({'mesas': data})
@@ -487,7 +478,8 @@ def agregar_mesa(request):
 
         if numero:
             try:
-                mesa = Mesa(numero_mesa=numero)
+                mesa = Mesa(numero_mesa=numero,
+                            estado_mesa=0)
                 mesa.save()
                 messages.success(request, 'Mesa agregada exitosamente.')
                 return redirect('gestionar_mesas')

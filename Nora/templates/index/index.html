@@ -12,13 +12,15 @@
         </header>
         <div class="row row-cols-4">
             {% for mesa in mesas %}
-            <a 
-                href="{% if mesa.estado_mesa == 0 %}{% url 'agregar_pedido' mesa.numero_mesa %}
-                {% elif mesa.estado_mesa == 1 %}{% url 'editar_pedido' mesa.pedido_asociado %}{% endif %}" 
-                class="link-underline link-underline-opacity-0 col-lg-2 col-md-2 col-4 mesa-{{ mesa.numero_mesa }}" >
-                <div class="card mb-4 p-2 card-hover 
-                    {% if mesa.estado_mesa == 1 %}text-bg-danger{% else %}bg-navbar text-light{% endif %}">
-                    <img src="{% static 'default_images/mesa.png' %}" class="card-img-top">
+            <a href="#" class="link-underline link-underline-opacity-0 col-lg-2 col-md-2 col-4 mesa-{{ mesa.numero_mesa }}">
+                <div class="card mb-4 p-2 card-hover bg-navbar text-light">
+                    <div class="card-header">
+                        <span class="badge text-bg-warning rounded-pill mesa-badge d-none">
+                            <i class="bi bi-currency-dollar me-1"></i>
+                            <small class="me-1">{{ mesa.total_pedido }}</small>
+                        </span>
+                        <img src="{% static 'default_images/mesa.png' %}" class="card-img-top">
+                    </div>
                     <div class="card-body border-top text-center p-0">
                         <h4 class="m-0">Mesa {{ mesa.numero_mesa }}</h4>
                         <p class="m-0">{% if mesa.estado_mesa == 1 %}Ocupada{% else %}Disponible{% endif %}</p>

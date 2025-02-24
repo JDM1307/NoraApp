@@ -2,123 +2,78 @@
 {% block title %}Editar Cierre{% endblock %}
 {% block content %}
 {% load humanize %}
-<main class="d-flex flex-column justify-content-start align-items-center">
-    <!--Tabla Cierres-->
-    <section class="card text-bg-secondary p-3">
-        <header class="card-header">
-            <div class="d-flex justify-content-between">
-                <h3>Editar Cierre de Caja</h3>
-                <a class="btn btn-danger" href="{% url 'gestionar_cierres' %}">Cancelar</a>
-            </div>
-            <fieldset class="m-2">
-                <label class="form-label">Fecha Actual</label>
-                <input class="form-control" type="text" value="{{ fecha_inicio }}" readonly>
-            </fieldset>
-        </header>
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                <table id="tabla-arqueo" class="table table-dark table-hover border border-secondary">
-                    <thead class="table-secondary">
-                        <tr>
-                            <th>Concepto</th>
-                            <th>Monto</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Base</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_base|intcomma }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total Retiros</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_retiros|intcomma }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Ventas en Efectivo</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_efectivo|intcomma }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Ventas en Nequi</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_nequi|intcomma }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Ventas en Daviplata</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_davip|intcomma }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total en Caja</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_caja|intcomma }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total Ventas</strong></td>
-                            <td><input type="text" class="form-control"  value="{{ total_ventas|intcomma }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td class="bg-success-subtle text-dark"><strong>Validar Caja</strong></td>
-                            <td class="bg-success-subtle">
-                                <input id="us_caja" placeholder="Digite un valor" type="number" class="form-control border border-success" name="us_caja" value="{{ cierre.us_caja }}" required>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Observaciones</strong></td>
-                            <td><textarea class="form-control" id="observacion" name="obs_cierre" placeholder="Digite una observación">{{ cierre.obs_cierre }}</textarea></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <fieldset class="d-flex justify-content-end">
-                    <button class="btn btn-success save-btn" type="button">Grabar</button>
+<body data-page="arqueos" data-key_create="editar_cierre" data-info="Actualizando cierre">
+    <main class="d-flex flex-column justify-content-start align-items-center">
+        <!--Tabla Cierres-->
+        <section class="card text-bg-secondary p-3">
+            <header class="card-header">
+                <div class="d-flex justify-content-between">
+                    <h3>Editar Cierre de Caja</h3>
+                    <a class="btn btn-danger" href="{% url 'gestionar_cierres' %}">Cancelar</a>
+                </div>
+                <fieldset class="m-2">
+                    <label class="form-label">Fecha Actual</label>
+                    <input class="form-control" type="text" value="{{ fecha_inicio }}" readonly>
                 </fieldset>
-            </form>
-        </div>
-    </section>
-</main>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {    
-        $(document).ready(function () {
-                    // Inicializar DataTables
-                    $('#tabla-arqueo').DataTable({
-                        responsive: true,
-                        paging: false,        
-                        searching: false,    
-                        ordering: false,      
-                        info: true,           
-                        select: true,
-                        language: {
-                            select: {
-                                rows: {
-                                    1: "1 fila seleccionada"
-                                }
-                            },
-                            processing: "Procesando...",
-                            info: "Finalizando turno",
-                        },
-                    });
-                });
-    });
-
-    //sweetalert grabar cierre
-    document.querySelector(".save-btn").addEventListener("click", function (e) {
-            e.preventDefault();
-            let form = this.closest("form"); // Obtiene el formulario más cercano
-            let cierre = document.getElementById("us_caja");
-            valorCierre = cierre.value;
-
-            Swal.fire({
-                text: `¿Esta seguro de actualizar el cierre de caja en: $${valorCierre}?`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Sí, guardar",
-                cancelButtonText: "Cancelar",
-                background: "#1e272e",
-                color: "#f8f9fa",
-                width: "300px"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit(); // Envía el formulario si el usuario confirma
-                }
-            });
-        });
-</script>
+            </header>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <table id="tabla-arqueo" class="table table-dark table-hover border border-secondary">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Base</strong></td>
+                                <td><input type="text" class="form-control" value="{{ total_base|intcomma }}" readonly></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Retiros</strong></td>
+                                <td><input type="text" class="form-control" value="{{ total_retiros|intcomma }}" readonly></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ventas en Efectivo</strong></td>
+                                <td><input type="text" class="form-control" value="{{ total_efectivo|intcomma }}" readonly></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ventas en Nequi</strong></td>
+                                <td><input type="text" class="form-control" value="{{ total_nequi|intcomma }}" readonly></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ventas en Daviplata</strong></td>
+                                <td><input type="text" class="form-control" value="{{ total_davip|intcomma }}" readonly></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total en Caja</strong></td>
+                                <td><input type="text" class="form-control" value="{{ total_caja|intcomma }}" readonly></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Ventas</strong></td>
+                                <td><input type="text" class="form-control"  value="{{ total_ventas|intcomma }}" readonly></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-success-subtle text-dark"><strong>Validar Caja</strong></td>
+                                <td class="bg-success-subtle">
+                                    <input id="us_caja" placeholder="Digite un valor" type="number" class="valor form-control border border-success" name="us_caja" value="{{ cierre.us_caja }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Observaciones</strong></td>
+                                <td><textarea class="form-control" id="observacion" name="obs_cierre" placeholder="Digite una observación">{{ cierre.obs_cierre }}</textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <fieldset class="d-flex justify-content-end">
+                        <button class="save-btn btn btn-success save-btn" type="button"
+                        data-msj_create="Está seguro de actualizar este cierre en:">Grabar</button>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
 {% endblock %}

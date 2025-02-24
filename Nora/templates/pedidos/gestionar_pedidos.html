@@ -29,7 +29,7 @@
                     </fieldset>
             
                     <fieldset class="m-2">
-                        <label class="form-label">Estado</label>
+                        <label class="form-label">Medio de pago</label>
                         <select class="form-control" name="medio_pago">
                             <option value="">Todos</option>
                             <option value="2" {% if estado == "2" %}selected{% endif %}>Efectivo</option>
@@ -54,11 +54,10 @@
                     <th class="text-start">Pedido</th>
                     <th class="text-start">Mesa</th>
                     <th class="text-start">Total</th>
-                    <th class="text-center">Medio de pago</th>
+                    <th class="text-start">Medio de pago</th>
                     <th class="text-start">Entró</th>
                     <th class="text-start">Finalizó</th>
                     <th class="text-start">Responsable</th>
-                    <th class="text-start">Estado</th>
                     <th class="text-start">Acciones</th>
                 </tr>
             </thead>
@@ -70,7 +69,7 @@
                             <td class="text-start">{{ pedido.numero_pedido }}</td>
                             <td class="text-start">{{ pedido.mesa_id }}</td>
                             <td class="text-start">${{ pedido.total_pedido }}</td>
-                            <td class="text-center">
+                            <td class="text-start">
                                 {% if pedido.estado_pedido == 2 %}
                                     <span class="badge bg-success">Efectivo</span>
                                 {% elif pedido.estado_pedido == 3 %}
@@ -82,13 +81,6 @@
                             <td class="text-start">{{ pedido.creado_en }}</td>
                             <td class="text-start">{{ pedido.actualizado_en }}</td>
                             <td class="text-start">{{ pedido.usuario.username|default:"?" }}</td>
-                            <td class="text-start">
-                                {% if pedido.creado_en != pedido.actualizado_en %} 
-                                    <i class="bi bi-pencil-square text-warning"></i>
-                                {% else %}
-                                <i class="bi bi-check-square text-success"></i>
-                                {% endif %}
-                            </td>
                             <td class="text-start">
                                 <a class="btn btn-sm btn-light" href="{% url 'ver_pedido' pedido.numero_pedido %}"
                                 data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Ver">

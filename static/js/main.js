@@ -9,19 +9,23 @@ document.addEventListener('DOMContentLoaded', function () {
         
     
     /*Debbuggin*/
-        console.log("Ejecutando script en:", page);
+        console.info("DEBUGGIN: ", page);
         //console.log("key_create:", key_create)
         //console.log("key_delete:", key_delete);
 
 
     /*General*/
-        // Inicializar tooltips
+        //Inicializar tooltips
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.forEach(function (tooltipTriggerEl) {
             new bootstrap.Tooltip(tooltipTriggerEl);
+            console.info("--Tooltips inicializados"); //debuggin
         });
-        //Personalizacion datatables por defecto (bases, grupos, mesas, productos, retiros)
+
+        //Inicializar datatables por defecto (bases, grupos, mesas, productos, retiros)
         $(document).ready(function () {
+            console.info("--Datatable por defecto inicializada"); //Debuggin
+
             $('#mi-tabla').DataTable({
                 responsive: true,
                 paging: true,        
@@ -47,11 +51,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
             });
         });
-        //Funcionalidad para control de alertas y mensajes
+
+        //Inicializar control de alertas y mensajes
         if (messages) {
             try {
-                const parsedMessages = JSON.parse(messages);
                 //Personalizacion de Alertas y menajes por defecto
+                console.info("--Alertas y mensajes funcionando"); //Debuggin
+                const parsedMessages = JSON.parse(messages);
                 parsedMessages.forEach(message => {
                     Swal.fire({
                         text: message.text,
@@ -74,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error("Error al parsear los mensajes:", error);
             }
         }
-            //Asignacion de icono por tipo de mensaje
+            //Personalizacion de icono por tipo de mensaje
             function getIconType(type) {
                 switch (type) {
                     case "error": return "error";
@@ -84,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     default: return "info";
                 }
             }
-            //Asignacion de background por tipo de mensaje
+            //Personalizacion de background por tipo de mensaje
             function getBackgroundColor(type) {
                 switch (type) {
                     case "error": return "#ff4d4d";
@@ -94,14 +100,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     default: return "#333";
                 }
             }
-            //Asignacion color de texto por tipo de mensaje
+            //Personalizacion de color de texto por tipo de mensaje
             function getTextColor(type) {
                 return type === "warning" ? "#000" : "#fff";
             }
-        //Personalizacion datatables para arqueos (arqueos, cierres)
-        if (page === "arqueos" || page === "agregar_cierre"){
+            
+        //Inicializar datatables para arqueos (arqueos, cierres)
+        if (page === "arqueos"){
             $(document).ready(function () {
-                // Inicializar DataTables
+                console.info("--Datatable 'Arqueos' inicializada"); //debuggin
                 $('#tabla-arqueo').DataTable({
                     responsive: true,
                     paging: false,        
@@ -123,11 +130,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        //Funcionalidad confirmacion/cancelacion para eliminar un registro
+        //Inicializar Toast eliminacion de registros
         if (page && key_delete) {
             delete_elements()    
         }
-            //Toast sweetalert2 para eliminar elementos
+            //Funcion confirmar/cancelar eliminacion de registros
             function delete_elements() {
                 document.querySelectorAll(".delete-btn").forEach(button => {
                     button.addEventListener("click", function (e) {
@@ -165,11 +172,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 });
             }
-        //Funcionalidad confirmacion/cancelacion para crear un registro
+
+        //Inicializar Toast creacion/edicion de registros
         if (page && key_create){
             create_elements()
         }
-            //Toast sweetalert2 para crear elementos
+            //Funcion confirmar/cancelar creacion/edicion de registros
             function create_elements() { 
                 document.querySelector(".save-btn").addEventListener("click", function (e) {
                     e.preventDefault();
@@ -180,10 +188,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     valueConfirm = valor.value || " ";
         
                     Swal.fire({
-                        text: `¿${confirmMessage} $${valueConfirm}?`,
+                        text: `¿${confirmMessage} ${valueConfirm}?`,
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonText: '<i class="bi bi-check-circle"></i> Guardar',
+                        confirmButtonText: '<i class="bi bi-check-circle"></i> Confirmar',
                         cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
                         background: "#1e272e",
                         color: "#f8f9fa",
@@ -198,10 +206,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /*login.html*/
+        //Inicializar Scripts en login
         if (page === "login") {
             initLoginScripts();
         }
-            //Funcionalidad boton ver contraseña
+            //Funcion boton "ver contraseña"
             function initLoginScripts() {
             
                 const togglePassword = document.getElementById("togglePassword");
@@ -221,40 +230,104 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /*index.html*/
-        let mesaInterval = null; 
+        let mesaInterval = null;
+        let intentosFallidos = 0;
+        const MAX_INTENTOS = 3;
+        const INACTIVIDAD_MAXIMA = 5000;
+        let ultimaActividad = Date.now();
+        let ajaxActivo = false;
+        
+        /*Gestion Ajax Actualizar mesas*/
         if (page === "index" && url) {
-            actualizarMesas();
-            mesaInterval = setInterval(actualizarMesas, 5000);
-        }
-            //Funcionalidad actualizar estado de mesas
-            function actualizarMesas() {
-                $.getJSON(url, function (data) {
-                    data.mesas.forEach(function (mesa) {
-                        let mesaElement = $(".mesa-" + mesa.numero_mesa);
-                        let cardElement = mesaElement.find(".card");
-
-                        if (mesa.estado_mesa == 1) {
-                            cardElement.removeClass("bg-navbar text-light").addClass("text-bg-danger");
-                            mesaElement.attr("title", mesa.responsable + " - $" + mesa.total_pedido);
-                            mesaElement.find("p").text("Ocupada");
-                        } else {
-                            cardElement.removeClass("text-bg-danger").addClass("bg-navbar text-light");
-                            mesaElement.attr("title", "Seleccionar");
-                            mesaElement.find("p").text("Disponible");
-                        }
-                    });
-                }).fail(function () {
-                    console.error("Error al obtener los datos de las mesas");
-                });
-            }
-            //Funcionalidad detener intervalo actualizacion de mesas si se cambia de página
-            window.addEventListener("beforeunload", function () {
-                if (mesaInterval) {
-                    clearInterval(mesaInterval);
+            // Inicializar AJAX al cargar la página
+            iniciarActualizacion();
+        
+            // Evento actividad del usuario (mouse, scroll, teclado o clics)
+            $(document).on("mousemove scroll keydown click", function () {
+                ultimaActividad = Date.now();
+                if (!ajaxActivo) {
+                    iniciarActualizacion();
                 }
             });
-
-
-    /*gestionar_mesas.html*/
         
+            // Evento clic en cualquier mesa para reiniciar AJAX si estaba inactivo
+            $("a").on("click", function () {
+                ultimaActividad = Date.now();
+                if (!ajaxActivo) {
+                    iniciarActualizacion();
+                }
+            });
+        
+            // Comprobacion inactividad cada 5 segundos
+            setInterval(() => {
+                if (ajaxActivo && Date.now() - ultimaActividad > INACTIVIDAD_MAXIMA) {
+                    detenerActualizacion();
+                }
+            }, 5000);
+        }
+        
+        // Función iniciar la actualización periódica
+        function iniciarActualizacion() {
+            if (!ajaxActivo) {
+                ajaxActivo = true;
+                actualizarMesas();
+                mesaInterval = setInterval(actualizarMesas, 1000);
+            }
+        }
+        
+        // Función detener la actualización periódica
+        function detenerActualizacion() {
+            if (ajaxActivo) {
+                ajaxActivo = false;
+                clearInterval(mesaInterval);
+            }
+        }
+        
+        // Función AJAX actualizar mesas
+        function actualizarMesas() {
+            $.getJSON(url, function (data) {
+                intentosFallidos = 0; // Reiniciar contador si la petición es exitosa
+        
+                data.mesas.forEach(function (mesa) {
+                    let mesaElement = $(".mesa-" + mesa.numero_mesa);
+                    let cardElement = mesaElement.find(".card");
+                    let spanInfo = mesaElement.find(".badge");
+                    let linkElement = mesaElement;
+        
+                    if (mesa.estado_mesa == 1) {
+                        cardElement.removeClass("bg-navbar text-light").addClass("text-bg-danger");
+                        spanInfo.removeClass("d-none");
+                        mesaElement.attr("title", "Tomó: " + mesa.responsable);
+                        mesaElement.find("p").text("Ocupada");  
+                        mesaElement.find("small").text(mesa.total_pedido);
+                        linkElement.attr("href", `pedidos/editar/${mesa.pedido_asociado}/`);
+                    } else {
+                        cardElement.removeClass("text-bg-danger").addClass("bg-navbar text-light");
+                        spanInfo.addClass("d-none");
+                        mesaElement.attr("title", "Seleccionar");
+                        mesaElement.find("p").text("Disponible");
+                        mesaElement.find("small").text(" ");
+                        linkElement.attr("href", `pedidos/agregar/${mesa.numero_mesa}/`);
+                    }
+                });
+            }).fail(function () {
+                intentosFallidos++;
+                console.error(`Error al obtener los datos de las mesas (Intento ${intentosFallidos} de ${MAX_INTENTOS})`);
+        
+                if (intentosFallidos >= MAX_INTENTOS) {
+                    console.error("Se alcanzó el límite de intentos fallidos. Deteniendo actualización de mesas.");
+                    detenerActualizacion();
+                }
+            });
+        }
+        
+        // Evento AJAX abandono de página
+        window.addEventListener("beforeunload", function () {
+            detenerActualizacion();
+        });
+
+
+    /*gestionar_mesas.html*/  
+    
+    
 });

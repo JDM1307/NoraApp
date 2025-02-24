@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Retiros{% endblock %}
 {% block content %}
-<main>
+<body data-page="gestionar-retiros" data-key_delete="eliminar_retiros">
     <!--Filtros y agregar Retiros-->
     <section class="card text-bg-secondary mb-3">
         <header class="card-header">
@@ -38,10 +38,10 @@
                     <th class="text-start border-end border-dark">#</th>
                     <th class="text-start">Valor</th>
                     <th class="text-start">Observaciones</th>
-                    <th class="text-start">Responsable</th>
                     <th class="text-satrt">Creado</th>
                     {% if request.user.is_superuser %}
                     <th class="text-satrt">Estado</th>
+                    <th class="text-start">Responsable</th>
                     <th class="text-start">Acciones</th>
                     {% endif %}
                 </tr>
@@ -52,16 +52,16 @@
                         <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
                         <td class="text-start">{{ rt.retiro_monto }}</td>
                         <td class="text-start">{{ rt.retiro_observacion }}</td>
-                        <td class="text-start">{{ rt.usuario.username|default:"?" }}</td>
                         <td class="text-start">{{ rt.creado_en }}</td>
                         {% if request.user.is_superuser %}
                         <td class="text-start">
                             {% if rt.creado_en != rt.actualizado_en %} 
-                                <i class="bi bi-pencil-square text-warning"></i>
+                            <i class="bi bi-pencil-square text-warning"></i>
                             {% else %}
-                                <i class="bi bi-check-square text-success"></i>
+                            <i class="bi bi-check-square text-success"></i>
                             {% endif %}
                         </td>
+                        <td class="text-start">{{ rt.usuario.username|default:"?" }}</td>
                         <td class="text-start">
                             <a class="btn btn-sm btn-warning" href="{% url 'editar_retiro' rt.id %}"
                             data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
@@ -69,7 +69,8 @@
                             </a>
                             <a class="btn btn-sm btn-danger delete-btn"
                             data-id="{{ rt.id }}"
-                            data-obs="{{ rt.retiro_observacion }}"
+                            data-delete_url="eliminar/{{ rt.id }}/"
+                            data-msj_delete="¿Está seguro que desea eliminar el retiro: {{ rt.retiro_observacion }}?"
                             data-bs-toggle="tooltip" 
                             data-bs-placement="right" 
                             data-bs-title="Eliminar">
@@ -82,47 +83,7 @@
             </tbody>
         </table>
     </section>
-</main>
-
-<script>
-     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".delete-btn").forEach(button => {
-            button.addEventListener("click", function (e) {
-                e.preventDefault();
-                let retiroId = this.getAttribute("data-id");
-                let retiroObs = this.getAttribute("data-obs");
-                let deleteUrl = `eliminar/${retiroId}/`;
-
-                const Toast = Swal.mixin({
-                    toast: false,
-                    position: "center",
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
-                    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
-                    customClass: {
-                        confirmButton: "swal2-confirm",
-                        cancelButton: "swal2-cancel"
-                    },
-                    timer: 10000,
-                    timerProgressBar: true,
-                    icon: "warning",
-                    background: "#1e272e",
-                    color: "#f8f9fa",
-                    width: "300px"
-                });
-
-                Toast.fire({
-                    text: `¿Seguro que deseas eliminar el retiro "${retiroObs}"?`,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = deleteUrl;
-                    }
-                });
-            });
-        });
-    });
-</script>
+</body>
 {% endblock %}
 
 

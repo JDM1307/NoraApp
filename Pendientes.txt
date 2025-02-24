@@ -6,7 +6,6 @@ POR IMPLEMENTAR:
 
 3. agregar medio de pago por tarjeta agregar_pedido y editar_pedido
 
-4. Agregar iconos de usuario y total a mesas ocupadas en index (usar badges)
 
 
 
