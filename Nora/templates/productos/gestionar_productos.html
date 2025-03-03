@@ -35,7 +35,6 @@
             </form>
         </footer>
     </section>
-
     <!-- Tabla productos -->
     <section class="card text-bg-secondary p-3">
         <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
@@ -46,6 +45,8 @@
                     <th class="text-start">Precio</th>
                     <th class="text-start">Grupo</th>
                     <th class="text-start">Descripcion</th>
+                    <th class="text-start">Estado</th>
+                    <th class="text-start">Responsable</th>
                     <th class="text-start">Acciones</th>
                 </tr>
             </thead>
@@ -57,6 +58,16 @@
                         <td class="text-start">{{ producto.precio }}</td>
                         <td class="text-start">{{ producto.grupo.nombre_grupo }}</td>
                         <td class="text-start">{{ producto.descripcion }}</td>
+                        <td class="text-start">
+                            {% if producto.actualizado_en %} 
+                                <i class="bi bi-pencil-square text-warning"
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ producto.actualizado_en }}"></i>
+                            {% else %}
+                                <i class="bi bi-check-square text-success"
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ producto.creado_en }}"></i>
+                            {% endif %}
+                        </td>
+                        <td class="text-start">{{ producto.usuario.username|default:"?" }}</td>
                         <td class="text-start">
                             <a class="btn btn-sm btn-warning" href="{% url 'editar_producto' producto.id %}"
                             data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">

@@ -1,43 +1,47 @@
 {% extends "base.html" %}
 {% block title %}Agregar Producto{% endblock %}
 {% block content %}
-<main class="d-flex justify-content-center align-items-center flex-column">
-    <section class="card text-bg-secondary">
-        <header class="card-header">
-            <h3>Agregar Producto</h3>
-        </header>
-        <footer class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                <div class="d-flex flex-column">
-                    <fieldset class="m-2">
-                        <label class="form-label" for="nombre_producto">Nombre del Producto:</label>
-                        <input class="form-control" type="text" id="nombre_producto" name="nombre_producto" required>
-                    </fieldset>
-                    <fieldset class="m-2">
-                        <label class="form-label" for="precio_producto">Precio del Producto:</label>
-                        <input class="form-control" type="number" id="precio_producto" name="precio_producto" required>
-                    </fieldset>
-                    <fieldset class="m-2">
-                        <label class="form-label" for="grupo_producto">Grupo del Producto:</label>
-                        <select class="form-select" aria-label="Default select example" id="grupo_producto" name="grupo_producto" required>
-                            {% for grupo in grupos %}
-                                <option value="{{ grupo.id }}">{{ grupo.nombre_grupo }}</option>
-                            {% endfor %}
-                        </select>
-                    </fieldset>
-                    <fieldset class="m-2">
-                        <label class="form-label" for="descripcion_producto">Descripción del Producto:</label>
-                        <textarea class="form-control" placeholder="Agrega una descripcion al producto" id="descripcion_producto" 
-                        name="descripcion_producto" required></textarea>
-                    </fieldset>
-                    <div class="d-flex align-items-center justify-content-between m-2">
-                        <a class="btn btn-danger" href="{% url 'gestionar_productos' %}">Cancelar</a>
-                        <button class="btn btn-success" type="submit">Guardar</button>
+<body data-page="crear_producto" data-key_create="crear_producto">
+    <main class="d-flex justify-content-center align-items-center flex-column">
+        <section class="card text-bg-secondary">
+            <header class="card-header">
+                <h3>Agregar Producto</h3>
+            </header>
+            <footer class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex flex-column">
+                        <fieldset class="m-2">
+                            <label class="form-label" for="nombre_producto">Nombre del Producto:</label>
+                            <input class="form-control" type="text" id="nombre_producto" name="nombre_producto" required>
+                        </fieldset>
+                        <fieldset class="m-2">
+                            <label class="form-label" for="precio_producto">Precio del Producto:</label>
+                            <input class="valor form-control" type="number" id="precio_producto" name="precio_producto" required>
+                        </fieldset>
+                        <fieldset class="m-2">
+                            <label class="form-label" for="grupo_producto">Grupo del Producto:</label>
+                            <select class="form-select" aria-label="Default select example" id="grupo_producto" name="grupo_producto" required>
+                                {% for grupo in grupos %}
+                                    <option value="{{ grupo.id }}">{{ grupo.nombre_grupo }}</option>
+                                {% endfor %}
+                            </select>
+                        </fieldset>
+                        <fieldset class="m-2">
+                            <label class="form-label" for="descripcion_producto">Descripción del Producto:</label>
+                            <textarea class="form-control" placeholder="Agrega una descripcion al producto" id="descripcion_producto" 
+                            name="descripcion_producto"></textarea>
+                        </fieldset>
+                        <div class="d-flex align-items-center justify-content-between m-2">
+                            <a class="btn btn-danger" href="{% url 'gestionar_productos' %}">Cancelar</a>
+                            <button class="btn btn-success save-btn" type="submit"
+                            data-msj_create="Está seguro de grabar este producto en $:">Guardar</button>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </footer>
-    </section>
-</main>
+                </form>
+            </footer>
+        </section>
+    </main>
+</body>
+
 {% endblock %}

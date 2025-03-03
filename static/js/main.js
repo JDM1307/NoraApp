@@ -130,6 +130,50 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
+        // Inicializar Toast creacion/edicion de registros
+        if (page && key_create) {
+            create_elements();
+        }
+            // Función confirmar/cancelar creacion/edicion de registros
+            function create_elements() {
+                const saveButton = document.querySelector(".save-btn");
+                const form = saveButton.closest("form"); // Obtiene el formulario más cercano
+
+                // Función para mostrar el toast de confirmación
+                function showConfirmationToast(e) {
+                    e.preventDefault();
+
+                    let confirmMessage = saveButton.dataset.msj_create || "¿Estás seguro de grabar este elemento?";
+                    let valor = document.querySelector(".valor");
+                    let valueConfirm = valor.value || " ";
+
+                    Swal.fire({
+                        text: `¿${confirmMessage} ${valueConfirm}?`,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="bi bi-check-circle"></i> Confirmar',
+                        cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                        background: "#1e272e",
+                        color: "#f8f9fa",
+                        width: "300px"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Envía el formulario si el usuario confirma
+                        }
+                    });
+                }
+
+                // Evento click al botón de guardar
+                saveButton.addEventListener("click", showConfirmationToast);
+
+                // Evento oprimir tecla Enter/Intro
+                form.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter") {
+                        showConfirmationToast(e);
+                    }
+                });
+            }
+
         //Inicializar Toast eliminacion de registros
         if (page && key_delete) {
             delete_elements()    
@@ -173,37 +217,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-        //Inicializar Toast creacion/edicion de registros
-        if (page && key_create){
-            create_elements()
-        }
-            //Funcion confirmar/cancelar creacion/edicion de registros
-            function create_elements() { 
-                document.querySelector(".save-btn").addEventListener("click", function (e) {
-                    e.preventDefault();
-
-                    let confirmMessage = this.dataset.msj_create || "¿Estás seguro de grabar este elemento?";
-                    let form = this.closest("form"); // Obtiene el formulario más cercano
-                    let valor = document.querySelector(".valor");
-                    valueConfirm = valor.value || " ";
-        
-                    Swal.fire({
-                        text: `¿${confirmMessage} ${valueConfirm}?`,
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: '<i class="bi bi-check-circle"></i> Confirmar',
-                        cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
-                        background: "#1e272e",
-                        color: "#f8f9fa",
-                        width: "300px"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Envía el formulario si el usuario confirma
-                        }
-                    });
-                });
-            }
-
 
     /*login.html*/
         //Inicializar Scripts en login
@@ -233,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let mesaInterval = null;
         let intentosFallidos = 0;
         const MAX_INTENTOS = 3;
-        const INACTIVIDAD_MAXIMA = 5000;
+        const INACTIVIDAD_MAXIMA = 10000;
         let ultimaActividad = Date.now();
         let ajaxActivo = false;
         
@@ -266,65 +279,65 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 5000);
         }
         
-        // Función iniciar la actualización periódica
-        function iniciarActualizacion() {
-            if (!ajaxActivo) {
-                ajaxActivo = true;
-                actualizarMesas();
-                mesaInterval = setInterval(actualizarMesas, 1000);
+            // Función iniciar la actualización periódica
+            function iniciarActualizacion() {
+                if (!ajaxActivo) {
+                    ajaxActivo = true;
+                    actualizarMesas();
+                    mesaInterval = setInterval(actualizarMesas, 1000);
+                }
             }
-        }
-        
-        // Función detener la actualización periódica
-        function detenerActualizacion() {
-            if (ajaxActivo) {
-                ajaxActivo = false;
-                clearInterval(mesaInterval);
+            
+            // Función detener la actualización periódica
+            function detenerActualizacion() {
+                if (ajaxActivo) {
+                    ajaxActivo = false;
+                    clearInterval(mesaInterval);
+                }
             }
-        }
-        
-        // Función AJAX actualizar mesas
-        function actualizarMesas() {
-            $.getJSON(url, function (data) {
-                intentosFallidos = 0; // Reiniciar contador si la petición es exitosa
-        
-                data.mesas.forEach(function (mesa) {
-                    let mesaElement = $(".mesa-" + mesa.numero_mesa);
-                    let cardElement = mesaElement.find(".card");
-                    let spanInfo = mesaElement.find(".badge");
-                    let linkElement = mesaElement;
-        
-                    if (mesa.estado_mesa == 1) {
-                        cardElement.removeClass("bg-navbar text-light").addClass("text-bg-danger");
-                        spanInfo.removeClass("d-none");
-                        mesaElement.attr("title", "Tomó: " + mesa.responsable);
-                        mesaElement.find("p").text("Ocupada");  
-                        mesaElement.find("small").text(mesa.total_pedido);
-                        linkElement.attr("href", `pedidos/editar/${mesa.pedido_asociado}/`);
-                    } else {
-                        cardElement.removeClass("text-bg-danger").addClass("bg-navbar text-light");
-                        spanInfo.addClass("d-none");
-                        mesaElement.attr("title", "Seleccionar");
-                        mesaElement.find("p").text("Disponible");
-                        mesaElement.find("small").text(" ");
-                        linkElement.attr("href", `pedidos/agregar/${mesa.numero_mesa}/`);
+            
+            // Función AJAX actualizar mesas
+            function actualizarMesas() {
+                $.getJSON(url, function (data) {
+                    intentosFallidos = 0; // Reiniciar contador si la petición es exitosa
+            
+                    data.mesas.forEach(function (mesa) {
+                        let mesaElement = $(".mesa-" + mesa.numero_mesa);
+                        let cardElement = mesaElement.find(".card");
+                        let spanInfo = mesaElement.find(".badge");
+                        let linkElement = mesaElement;
+            
+                        if (mesa.estado_mesa == 1) {
+                            cardElement.removeClass("bg-navbar text-light").addClass("text-bg-danger");
+                            spanInfo.removeClass("d-none");
+                            mesaElement.attr("title", "Tomó: " + mesa.responsable);
+                            mesaElement.find("p").text("Ocupada");  
+                            mesaElement.find("small").text(mesa.total_pedido);
+                            linkElement.attr("href", `pedidos/editar/${mesa.pedido_asociado}/`);
+                        } else {
+                            cardElement.removeClass("text-bg-danger").addClass("bg-navbar text-light");
+                            spanInfo.addClass("d-none");
+                            mesaElement.attr("title", "Seleccionar");
+                            mesaElement.find("p").text("Disponible");
+                            mesaElement.find("small").text(" ");
+                            linkElement.attr("href", `pedidos/agregar/${mesa.numero_mesa}/`);
+                        }
+                    });
+                }).fail(function () {
+                    intentosFallidos++;
+                    console.error(`Error al obtener los datos de las mesas (Intento ${intentosFallidos} de ${MAX_INTENTOS})`);
+            
+                    if (intentosFallidos >= MAX_INTENTOS) {
+                        console.error("Se alcanzó el límite de intentos fallidos. Deteniendo actualización de mesas.");
+                        detenerActualizacion();
                     }
                 });
-            }).fail(function () {
-                intentosFallidos++;
-                console.error(`Error al obtener los datos de las mesas (Intento ${intentosFallidos} de ${MAX_INTENTOS})`);
-        
-                if (intentosFallidos >= MAX_INTENTOS) {
-                    console.error("Se alcanzó el límite de intentos fallidos. Deteniendo actualización de mesas.");
-                    detenerActualizacion();
-                }
+            }
+            
+            // Evento AJAX abandono de página
+            window.addEventListener("beforeunload", function () {
+                detenerActualizacion();
             });
-        }
-        
-        // Evento AJAX abandono de página
-        window.addEventListener("beforeunload", function () {
-            detenerActualizacion();
-        });
 
 
     /*gestionar_mesas.html*/  

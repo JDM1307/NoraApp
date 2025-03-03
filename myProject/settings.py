@@ -23,7 +23,7 @@ SECRET_KEY = 'your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "192.168.1.3"]
+ALLOWED_HOSTS = ["127.0.0.1", "192.168.1.2"]
 
 # Application definition
 
@@ -77,8 +77,8 @@ DATABASES = {
         'NAME': 'noradb',
         'USER': 'root',
         'PASSWORD': '',
-        'HOST': 'localhost',  # O la dirección de tu servidor MySQL
-        'PORT': '3306',       # O el puerto que uses para MySQL
+        'HOST': 'localhost',  #servidor MySQL
+        'PORT': '3306',       #puerto MySQL
     }
 }
 

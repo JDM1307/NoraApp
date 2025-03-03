@@ -12,8 +12,8 @@
                     <a class="btn btn-danger" href="{% url 'gestionar_cierres' %}">Cancelar</a>
                 </div>
                 <fieldset class="m-2">
-                    <label class="form-label">Fecha Actual</label>
-                    <input class="form-control" type="text" value="{{ fecha_inicio }}" readonly>
+                    <label class="form-label">Fecha del cierre</label>
+                    <input class="form-control" type="text" value="{{ cierre.creado_en }}" readonly>
                 </fieldset>
             </header>
             <div class="card-body">
@@ -29,47 +29,49 @@
                         <tbody>
                             <tr>
                                 <td><strong>Base</strong></td>
-                                <td><input type="text" class="form-control" value="{{ total_base|intcomma }}" readonly></td>
+                                <td><input type="text" class="form-control" value="{{ cierre.base_cierre|intcomma }}" readonly></td>
                             </tr>
                             <tr>
                                 <td><strong>Total Retiros</strong></td>
-                                <td><input type="text" class="form-control" value="{{ total_retiros|intcomma }}" readonly></td>
+                                <td><input type="text" class="form-control" value="{{ cierre.retiros_cierre|intcomma }}" readonly></td>
                             </tr>
                             <tr>
                                 <td><strong>Ventas en Efectivo</strong></td>
-                                <td><input type="text" class="form-control" value="{{ total_efectivo|intcomma }}" readonly></td>
+                                <td><input type="text" class="form-control" value="{{ cierre.vEfectivo_cierre|intcomma }}" readonly></td>
                             </tr>
                             <tr>
                                 <td><strong>Ventas en Nequi</strong></td>
-                                <td><input type="text" class="form-control" value="{{ total_nequi|intcomma }}" readonly></td>
+                                <td><input type="text" class="form-control" value="{{ cierre.vNequi_cierre|intcomma }}" readonly></td>
                             </tr>
                             <tr>
                                 <td><strong>Ventas en Daviplata</strong></td>
-                                <td><input type="text" class="form-control" value="{{ total_davip|intcomma }}" readonly></td>
+                                <td><input type="text" class="form-control" value="{{ cierre.vDavip_cierre|intcomma }}" readonly></td>
                             </tr>
                             <tr>
                                 <td><strong>Total en Caja</strong></td>
-                                <td><input type="text" class="form-control" value="{{ total_caja|intcomma }}" readonly></td>
+                                <td><input type="text" class="form-control" value="{{ cierre.tCaja_cierre|intcomma }}" readonly></td>
                             </tr>
                             <tr>
                                 <td><strong>Total Ventas</strong></td>
-                                <td><input type="text" class="form-control"  value="{{ total_ventas|intcomma }}" readonly></td>
+                                <td><input type="text" class="form-control"  value="{{ cierre.vTotal_cierre|intcomma }}" readonly></td>
                             </tr>
                             <tr>
                                 <td class="bg-success-subtle text-dark"><strong>Validar Caja</strong></td>
                                 <td class="bg-success-subtle">
-                                    <input id="us_caja" placeholder="Digite un valor" type="number" class="valor form-control border border-success" name="us_caja" value="{{ cierre.us_caja }}" required>
+                                    <input id="us_caja" placeholder="Digite un valor" type="number"
+                                     class="valor form-control border border-success" name="us_caja" value="{{ cierre.us_caja }}" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td><strong>Observaciones</strong></td>
-                                <td><textarea class="form-control" id="observacion" name="obs_cierre" placeholder="Digite una observación">{{ cierre.obs_cierre }}</textarea></td>
+                                <td><textarea class="form-control" id="observacion" name="obs_cierre"
+                                     placeholder="Digite una observación">{{ cierre.obs_cierre }}</textarea></td>
                             </tr>
                         </tbody>
                     </table>
                     <fieldset class="d-flex justify-content-end">
                         <button class="save-btn btn btn-success save-btn" type="button"
-                        data-msj_create="Está seguro de actualizar este cierre en:">Grabar</button>
+                        data-msj_create="Está seguro de actualizar este cierre en: $">Grabar</button>
                     </fieldset>
                 </form>
             </div>

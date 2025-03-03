@@ -6,9 +6,9 @@ from django.utils import timezone
 class Base(models.Model):
     base_dia = models.IntegerField()
     base_observacion = models.CharField(max_length=100, null=True)
-    creado_en = models.DateTimeField(auto_now_add=True)
-    actualizado_en = models.DateTimeField(auto_now=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.base_dia, self.base_observacion, self.usuario.username
@@ -18,17 +18,20 @@ class Base(models.Model):
 class Retiro(models.Model):
     retiro_monto = models.IntegerField()
     retiro_observacion = models.CharField(max_length=100, null=True)
-    creado_en = models.DateTimeField(auto_now_add=True)
-    actualizado_en = models.DateTimeField(auto_now=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.retiro_monto, self.retiro_observacion, self.usuario.username
 
 #Grupos
 class Grupo(models.Model):
-    nombre_grupo = models.CharField(max_length=100)
-    
+    nombre_grupo = models.CharField(max_length=100, unique=True)
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
         return self.nombre_grupo
 
@@ -38,8 +41,9 @@ class Producto(models.Model):
     precio = models.IntegerField()
     descripcion = models.TextField(blank=True, null=True)
     grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL, null=True, related_name='productos')
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     creado_en = models.DateTimeField(auto_now_add=True)
-    actualizado_en = models.DateTimeField(auto_now=True)
+    actualizado_en = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.nombre_producto
@@ -49,8 +53,9 @@ class Mesa(models.Model):
     numero_mesa = models.IntegerField(unique=True)
     estado_mesa = models.IntegerField(null=True)
     pedido_asociado = models.IntegerField(null=True)
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     creado_en = models.DateTimeField(auto_now_add=True)
-    actualizado_en = models.DateTimeField(auto_now=True)
+    actualizado_en = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.numero_mesa, self.estado_mesa, self.pedido_asociado
@@ -62,9 +67,9 @@ class Pedido(models.Model):
     productos = models.ManyToManyField('Producto', through='PedidoProducto', related_name='pedidos')  # Relación con el modelo intermedio
     total_pedido = models.IntegerField()
     estado_pedido = models.IntegerField(default=0)
-    creado_en = models.DateTimeField(auto_now_add=True)
-    actualizado_en = models.DateTimeField(auto_now=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.numero_pedido
@@ -93,7 +98,7 @@ class Cierre(models.Model):
     obs_cierre = models.CharField(max_length=100, null=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     creado_en = models.DateTimeField(auto_now_add=True)
-    actualizado_en = models.DateTimeField(auto_now=True)
+    actualizado_en = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.base_cierre, self.retiros_cierre, self.vEfectivo_cierre, self.vNequi_cierre, self.vDavip_cierre, self.vTotal_cierre, self.tCaja_cierre, self.us_caja, self.obs_cierre   

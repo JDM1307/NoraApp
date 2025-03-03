@@ -46,17 +46,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for bs in base %}
+                {% for bs in bases %}
                     <tr>
                         <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
                         <td class="text-start">${{ bs.base_dia | intcomma }}</td>
                         <td class="text-start">{{ bs.base_observacion }}</td>
                         <td class="text-start">{{ bs.creado_en }}</td>
                         <td class="text-start">
-                            {% if bs.creado_en != bs.actualizado_en %} 
-                                <i class="bi bi-pencil-square text-warning"></i>
+                            {% if bs.actualizado_en %} 
+                                <i class="bi bi-pencil-square text-warning"
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ bs.actualizado_en }}"></i>
                             {% else %}
-                            <i class="bi bi-check-square text-success"></i>
+                                <i class="bi bi-check-square text-success"></i>
                             {% endif %}
                         </td>
                         <td class="text-start">{{ bs.usuario.username|default:"?" }}</td>

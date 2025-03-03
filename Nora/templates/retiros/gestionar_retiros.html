@@ -55,10 +55,11 @@
                         <td class="text-start">{{ rt.creado_en }}</td>
                         {% if request.user.is_superuser %}
                         <td class="text-start">
-                            {% if rt.creado_en != rt.actualizado_en %} 
-                            <i class="bi bi-pencil-square text-warning"></i>
+                            {% if rt.actualizado_en %} 
+                                <i class="bi bi-pencil-square text-warning"
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ rt.actualizado_en }}"></i>
                             {% else %}
-                            <i class="bi bi-check-square text-success"></i>
+                                <i class="bi bi-check-square text-success"></i>
                             {% endif %}
                         </td>
                         <td class="text-start">{{ rt.usuario.username|default:"?" }}</td>
