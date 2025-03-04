@@ -33,6 +33,9 @@
                 <tr>
                     <th class="text-center border-end border-dark">#</th>
                     <th class="text-center">Numero Mesa</th>
+                    <th class="text-satrt">Creado</th>
+                    <th class="text-satrt">Estado</th>
+                    <th class="text-start">Responsable</th>
                     <th class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -41,6 +44,16 @@
                     <tr>
                         <td class="text-center border-end border-secondary">{{ forloop.counter }}</td>
                         <td class="text-center">{{ mesa.numero_mesa }}</td>
+                        <td class="text-start">{{ mesa.creado_en }}</td>
+                        <td class="text-start">
+                            {% if mesa.actualizado_en %} 
+                                <i class="bi bi-pencil-square text-warning"
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ mesa.actualizado_en }}"></i>
+                            {% else %}
+                                <i class="bi bi-check-square text-success"></i>
+                            {% endif %}
+                        </td>
+                        <td class="text-start">{{ mesa.usuario.username|default:"?" }}</td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-warning me-1" href="{% url 'editar_mesa' mesa.id %}"
                             data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">

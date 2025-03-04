@@ -1,405 +1,409 @@
 {% extends "base.html" %}
 {% block title %}Editar Pedido{% endblock %}
 {% block content %}
-<main>
-    <section class="card text-bg-secondary mb-3">
-        <header class="card-header d-flex justify-content-between">
-            <h3>Editar Pedido</h3>
-            <a class="btn btn-warning d-flex align-items-center" href="{% url 'index' %}">
-                <i class="bi bi-arrow-90deg-left me-2"></i> Volver
-            </a>
-        </header>
-        <footer class="card-body row">
-            <!--Estructura del Pedido -->
-            <section class="card text-bg-tertiary border-dark col-lg-8 p-0">
-                <!--Visualizacion numero mesa y pedido-->
-                <header class="card-header d-flex justify-content-between bg-dark">
-                    <h3 class="m-2">
-                        <span class="badge text-bg-secondary text-wrap">Mesa {{ pedido.mesa.numero_mesa }}</span>
-                    </h3>
-                    <h3 class="m-2">
-                        <span class="badge bg-navbar text-wrap">Pedido # {{ pedido.numero_pedido }}</span>
-                    </h3>
-                </header>
-                <!--Tabla productos asignados al pedido-->
-                <div class="card-body pt-0 ps-4 pe-4 pb-0">
-                    <table id="tabla-productos" class="table table-secondary table-sm border border-secondary table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th class="text-center">Cant.</th>
-                                <th class="text-center">Producto</th>
-                                <th class="text-center">Precio</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for p_p in productos_pedido %}
-                                <tr>
-                                    <td class="producto-cantidad text-center" data-cantidad-producto="{{ p_p.cantidad }}">
-                                        {{ p_p.cantidad }}
-                                    </td>
-                                    <td class="producto-nombre text-center" data-id-producto="{{ p_p.producto.id }}">
-                                        {{ p_p.producto.nombre_producto }}
-                                    </td>
-                                    <td class="producto-precio text-center" data-precio-producto="{{ p_p.producto.precio }}">
-                                        ${{ p_p.precio_total }}
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-success btn-sm add-btn">+</button>
-                                        <button class="btn btn-warning btn-sm restar-btn">-</button>
-                                        <button class="btn btn-danger btn-sm remover-btn">x</button>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <!--Visualizacion Total y guardar pedido-->
-                <div class="card-footer bg-dark">
-                    <div class="row p-0">
-                        <div class="col"></div>
-                        <div class="input-group col">
-                            <span class="input-group-text border border-primary bg-dark text-primary" id="basic-addon2">$</span>
-                            <input type="text" class="form-control total-tabla border border-primary bg-primary-subtle"
-                            name="total_pedido" value="{{ pedido.total_pedido }}" id="total-tabla" readonly>
-                            <span class="input-group-text border border-primary bg-dark text-primary" id="basic-addon2">Total</span>
-                        </div>
-                    </div>
-                </div>
-                <!--Formulario oculto: recepcion de productos y botones medio de pago-->
-                <footer class="card-footer bg-dark">
-                    <form class="d-flex justify-content-between" action="{% url 'editar_pedido' pedido.numero_pedido %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" id="mesa" name="mesa" value="{{ mesa_seleccionada }}">
-                        <input id="productos-form" name="productos" value="{{ productos_actuales }}" type="hidden">
-                        <input class="btn-check" type="checkbox" name="estado" value="{{ pedido.estado_pedido }}" id="guardar" style="display:none;">
-                        
-                        <fieldset class="d-flex align-items-center">
-                            <input class="btn-check" type="checkbox" name="estado" value="2" id="efectivo" autocomplete="off">
-                            <label class="btn btn-outline-success btn-sm border border-success me-2" for="efectivo">
-                                Efectivo
-                            </label>
-                            <input class="btn-check" type="checkbox" name="estado" value="3" id="nequi" autocomplete="off">
-                            <label class="btn btn-outline-primary btn-sm border border-primary me-2" for="nequi">
-                                Nequi
-                            </label>
-                            <input class="btn-check" type="checkbox" name="estado" value="4" id="davip" autocomplete="off">
-                            <label class="btn btn-outline-danger btn-sm border border-danger me-2" for="davip">
-                                Daviplata
-                            </label>
-                        </fieldset>
-                        <fieldset>
-                            <button class="btn btn-primary" type="submit" id="btn-guardar">
-                                Actualizar
-                            </button>
-                        </fieldset>
-                    </form>
-                </footer>
-            </section>
-            <!-- Seleccion de Grupos -->
-            <div class="d-flex justify-content-lg-end col-lg-4 p-0 mt-2" style="height: 520px;">
-                <section class="card bg-tertiary border border-dark col-lg-11 col-md-12 col-12">
-                    <header class="card-header text-center bg-dark">
+<body data-page="editar_pedido" data-key_create="editar-pedido">
+    <main>
+        <section class="card text-bg-secondary mb-3">
+            <header class="card-header d-flex justify-content-between">
+                <h3>Editar Pedido</h3>
+                <a class="btn btn-warning d-flex align-items-center" href="{% url 'index' %}">
+                    <i class="bi bi-arrow-90deg-left me-2"></i> Volver
+                </a>
+            </header>
+            <footer class="card-body row">
+                <!--Estructura del Pedido -->
+                <section class="card text-bg-tertiary border-dark col-lg-8 p-0">
+                    <!--Visualizacion numero mesa y pedido-->
+                    <header class="card-header d-flex justify-content-between bg-dark">
                         <h3 class="m-2">
-                            <span class="badge text-bg-danger text-wrap">Grupos de productos</span>
+                            <span class="badge text-bg-secondary text-wrap">Mesa {{ pedido.mesa.numero_mesa }}</span>
+                        </h3>
+                        <h3 class="m-2">
+                            <span class="badge bg-navbar text-wrap">Pedido # {{ pedido.numero_pedido }}</span>
                         </h3>
                     </header>
-                    <footer class="card-body"style="overflow-y: auto;">
-                        <div class="row row-cols-3">
-                            {% for grupo in grupos %}
-                                <div class="col d-flex justify-content-center mb-4">
-                                    <button
-                                        class="btn btn-custom rectangle-btn"
-                                        type="button"
-                                        data-bs-toggle="offcanvas"
-                                        data-bs-target="#offcanvasGrupo{{ grupo.id }}"
-                                        aria-controls="offcanvasGrupo{{ grupo.id }}">
-                                        <small class="badge text-wrap">{{ grupo.nombre_grupo }}</small>
-                                    </button>
-                                </div>
-                            {% endfor %}
+                    <!--Tabla productos asignados al pedido-->
+                    <div class="card-body pt-0 ps-4 pe-4 pb-0">
+                        <table id="tabla-productos" class="table table-secondary table-sm border border-secondary table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="text-center">Cant.</th>
+                                    <th class="text-center">Producto</th>
+                                    <th class="text-center">Precio</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p_p in productos_pedido %}
+                                    <tr>
+                                        <td class="producto-cantidad text-center" data-cantidad-producto="{{ p_p.cantidad }}">
+                                            {{ p_p.cantidad }}
+                                        </td>
+                                        <td class="producto-nombre text-center" data-id-producto="{{ p_p.producto.id }}">
+                                            {{ p_p.producto.nombre_producto }}
+                                        </td>
+                                        <td class="producto-precio text-center" data-precio-producto="{{ p_p.producto.precio }}">
+                                            ${{ p_p.precio_total }}
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="btn btn-success btn-sm add-btn">+</button>
+                                            <button class="btn btn-warning btn-sm restar-btn">-</button>
+                                            <button class="btn btn-danger btn-sm remover-btn">x</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--Visualizacion Total y guardar pedido-->
+                    <div class="card-footer bg-dark">
+                        <div class="row p-0">
+                            <div class="col"></div>
+                            <div class="input-group col">
+                                <span class="input-group-text border border-primary bg-dark text-primary" id="basic-addon2">$</span>
+                                <input type="text" class="form-control total-tabla border border-primary bg-primary-subtle"
+                                name="total_pedido" value="{{ pedido.total_pedido }}" id="total-tabla" readonly>
+                                <span class="input-group-text border border-primary bg-dark text-primary" id="basic-addon2">Total</span>
+                            </div>
                         </div>
+                    </div>
+                    <!--Formulario oculto: recepcion de productos y botones medio de pago-->
+                    <footer class="card-footer bg-dark">
+                        <form class="d-flex justify-content-between" action="{% url 'editar_pedido' pedido.numero_pedido %}" method="post">
+                            {% csrf_token %}
+                            <input class="valor" type="hidden" id="mesa" name="mesa" value="{{ mesa_seleccionada }}">
+                            <input id="productos-form" name="productos" value="{{ productos_actuales }}" type="hidden">
+                            <input class="btn-check" type="checkbox" name="estado" value="{{ pedido.estado_pedido }}" id="guardar" style="display:none;">
+                            
+                            <fieldset class="d-flex align-items-center">
+                                <input class="btn-check" type="checkbox" name="estado" value="2" id="efectivo" autocomplete="off">
+                                <label class="btn btn-outline-success btn-sm border border-success me-2" for="efectivo">
+                                    Efectivo
+                                </label>
+                                <input class="btn-check" type="checkbox" name="estado" value="3" id="nequi" autocomplete="off">
+                                <label class="btn btn-outline-primary btn-sm border border-primary me-2" for="nequi">
+                                    Nequi
+                                </label>
+                                <input class="btn-check" type="checkbox" name="estado" value="4" id="davip" autocomplete="off">
+                                <label class="btn btn-outline-danger btn-sm border border-danger me-2" for="davip">
+                                    Daviplata
+                                </label>
+                            </fieldset>
+                            <fieldset>
+                                <button class="save-btn btn btn-primary" type="submit" id="btn-guardar"
+                                data-msj_create="Está seguro de realizar esta accion en la mesa: ">
+                                    Actualizar
+                                </button>
+                            </fieldset>
+                        </form>
                     </footer>
                 </section>
-            </div>
-            <!-- Selección de Productos -->
-            {% for grupo in grupos %}
-                <div
-                    class="offcanvas offcanvas-bottom bg-dark border border-top-secondary"
-                    tabindex="-1"
-                    data-bs-backdrop="true"
-                    id="offcanvasGrupo{{ grupo.id }}"
-                    data-bs-scroll="true"
-                    aria-labelledby="offcanvasGrupoLabel{{ grupo.id }}">
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title text-light" id="offcanvasGrupoLabel{{ grupo.id }}">{{ grupo.nombre_grupo }}</h5>
-                        <fieldset class="form-group ms-2 me-1">
-                            <div class="input-group">
-                                <input type="text" class="form-control filtro-productos" placeholder="Buscar producto...">
-                                <button class="btn btn-danger" type="button" id="button-addon1"  
-                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Borrar">
-                                    <i class="bi bi-eraser"></i>
-                                </button>
+                <!-- Seleccion de Grupos -->
+                <div class="d-flex justify-content-lg-end col-lg-4 p-0 mt-2" style="height: 520px;">
+                    <section class="card bg-tertiary border border-dark col-lg-11 col-md-12 col-12">
+                        <header class="card-header text-center bg-dark">
+                            <h3 class="m-2">
+                                <span class="badge text-bg-danger text-wrap">Grupos de productos</span>
+                            </h3>
+                        </header>
+                        <footer class="card-body"style="overflow-y: auto;">
+                            <div class="row row-cols-3">
+                                {% for grupo in grupos %}
+                                    <div class="col d-flex justify-content-center mb-4">
+                                        <button
+                                            class="btn btn-custom rectangle-btn"
+                                            type="button"
+                                            data-bs-toggle="offcanvas"
+                                            data-bs-target="#offcanvasGrupo{{ grupo.id }}"
+                                            aria-controls="offcanvasGrupo{{ grupo.id }}">
+                                            <small class="badge text-wrap">{{ grupo.nombre_grupo }}</small>
+                                        </button>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        </fieldset>
-                        <button type="button" class="btn-close bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body small row row-cols-4 pt-0">
-                        {% for producto in productos %}
-                            {% if producto.grupo_id == grupo.id %}
-                                <button
-                                    class="btn btn-secondary square-btn producto-btn ms-2 mb-2"
-                                    data-id-producto="{{ producto.id }}"
-                                    data-nombre="{{ producto.nombre_producto }}"
-                                    data-precio="{{ producto.precio }}""
-                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="${{ producto.precio }}">
-                                    <span class="badge text-wrap">{{ producto.nombre_producto }}</span>
-                                </button>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+                        </footer>
+                    </section>
                 </div>
-            {% endfor %}
-        </footer>
-    </section>
-</main>
+                <!-- Selección de Productos -->
+                {% for grupo in grupos %}
+                    <div
+                        class="offcanvas offcanvas-bottom bg-dark border border-top-secondary"
+                        tabindex="-1"
+                        data-bs-backdrop="true"
+                        id="offcanvasGrupo{{ grupo.id }}"
+                        data-bs-scroll="true"
+                        aria-labelledby="offcanvasGrupoLabel{{ grupo.id }}">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title text-light" id="offcanvasGrupoLabel{{ grupo.id }}">{{ grupo.nombre_grupo }}</h5>
+                            <fieldset class="form-group ms-2 me-1">
+                                <div class="input-group">
+                                    <input type="text" class="form-control filtro-productos" placeholder="Buscar producto...">
+                                    <button class="btn btn-danger" type="button" id="button-addon1"  
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Borrar">
+                                        <i class="bi bi-eraser"></i>
+                                    </button>
+                                </div>
+                            </fieldset>
+                            <button type="button" class="btn-close bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body small row row-cols-4 pt-0">
+                            {% for producto in productos %}
+                                {% if producto.grupo_id == grupo.id %}
+                                    <button
+                                        class="btn btn-secondary square-btn producto-btn ms-2 mb-2"
+                                        data-id-producto="{{ producto.id }}"
+                                        data-nombre="{{ producto.nombre_producto }}"
+                                        data-precio="{{ producto.precio }}""
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="${{ producto.precio }}">
+                                        <span class="badge text-wrap">{{ producto.nombre_producto }}</span>
+                                    </button>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </footer>
+        </section>
+    </main>
 
-<script>
-     document.addEventListener('DOMContentLoaded', function () {
-        //PERSONALIZACION DATATABLE
-        $(document).ready(function () {
-            // Inicializar DataTables
-            $('#tabla-productos').DataTable({
-                responsive: true,
-                paging: false,  
-                scrollY: "300px",
-                scrollCollapse: true,      
-                searching: false,     
-                ordering: false,      
-                info: false,           
-                select: false,
-                language: {
-                    zeroRecords: "",
-                    emptyTable: "",
-                },
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            //PERSONALIZACION DATATABLE
+            $(document).ready(function () {
+                // Inicializar DataTables
+                $('#tabla-productos').DataTable({
+                    responsive: true,
+                    paging: false,  
+                    scrollY: "300px",
+                    scrollCollapse: true,      
+                    searching: false,     
+                    ordering: false,      
+                    info: false,           
+                    select: false,
+                    language: {
+                        zeroRecords: "",
+                        emptyTable: "",
+                    },
+                });
             });
-        });
 
-        //FUNCIONALIDAD FILTRO BUSQUEDA DE PRODUCTOS
-        document.querySelectorAll(".filtro-productos").forEach(input => {
-            input.addEventListener("input", function () {
-                let filtro = this.value.trim().toLowerCase(); // Elimina espacios innecesarios
-                let botones = document.querySelectorAll(".producto-btn");
+            //FUNCIONALIDAD FILTRO BUSQUEDA DE PRODUCTOS
+            document.querySelectorAll(".filtro-productos").forEach(input => {
+                input.addEventListener("input", function () {
+                    let filtro = this.value.trim().toLowerCase(); // Elimina espacios innecesarios
+                    let botones = document.querySelectorAll(".producto-btn");
 
-                botones.forEach(boton => {
-                    let nombre = boton.dataset.nombre.trim().toLowerCase(); // Normaliza espacios y minúsculas
-                    if (nombre.includes(filtro)) {
-                        boton.style.display = "block";
+                    botones.forEach(boton => {
+                        let nombre = boton.dataset.nombre.trim().toLowerCase(); // Normaliza espacios y minúsculas
+                        if (nombre.includes(filtro)) {
+                            boton.style.display = "block";
+                        } else {
+                            boton.style.display = "none";
+                        }
+                    });
+                });
+            });
+
+            //FUNCIONALIDAD CIERRE DE OFFCANVAS PRODUCTOS Y LIMPIEZA DE FILTRO BUSQUEDA DE PRODUCTOS
+            const close_btns = document.querySelectorAll(".btn-close");
+            const brush_btn = document.querySelectorAll("#button-addon1");
+            const filtro_productos = document.querySelectorAll(".filtro-productos");
+            let botones = document.querySelectorAll(".producto-btn");
+
+            close_btns.forEach(close_btn => {
+                close_btn.addEventListener('click', function () {
+                    filtro_productos.forEach(filtro => {
+                        filtro.value = "";
+                        botones.forEach(boton => {
+                            boton.style.display = "block";
+                        });
+                    });
+                });
+            });
+
+            brush_btn.forEach(brush => {
+                brush.addEventListener('click', function () {
+                    filtro_productos.forEach(filtro => {
+                        filtro.value = "";
+                        botones.forEach(boton => {
+                            boton.style.display = "block";
+                        });
+                    });
+                });
+            });
+
+            //FUNCIONALIDAD CHECKBOX PARA FINALIZAR PEDIDO EN TABLA
+            const checkboxes = document.querySelectorAll('.btn-check'); // Selecciona los checkboxes tipo btn-check
+            const btnGuardar = document.getElementById('btn-guardar');
+            const guardar = document.getElementById('guardar');
+            guardar.checked = true;
+
+            const config = {
+                "efectivo": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" },
+                "nequi": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" },
+                "davip": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" }
+            };
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        // Desactivar otros checkboxes
+                        checkboxes.forEach(cb => {
+                            if (cb !== this) cb.checked = false;
+                        });
+
+                        // Cambiar botón
+                        const metodo = config[this.id];
+                        btnGuardar.innerHTML = `<i class="${metodo.icon} me-1"></i>${metodo.text}`;
+                        btnGuardar.className = `btn ${metodo.color}`;
                     } else {
-                        boton.style.display = "none";
+                        resetButton();
+                        guardar.checked = true;
                     }
                 });
             });
-        });
 
-        //FUNCIONALIDAD CIERRE DE OFFCANVAS PRODUCTOS Y LIMPIEZA DE FILTRO BUSQUEDA DE PRODUCTOS
-        const close_btns = document.querySelectorAll(".btn-close");
-        const brush_btn = document.querySelectorAll("#button-addon1");
-        const filtro_productos = document.querySelectorAll(".filtro-productos");
-        let botones = document.querySelectorAll(".producto-btn");
-
-        close_btns.forEach(close_btn => {
-            close_btn.addEventListener('click', function () {
-                filtro_productos.forEach(filtro => {
-                    filtro.value = "";
-                    botones.forEach(boton => {
-                        boton.style.display = "block";
-                    });
-                });
-            });
-        });
-
-        brush_btn.forEach(brush => {
-            brush.addEventListener('click', function () {
-                filtro_productos.forEach(filtro => {
-                    filtro.value = "";
-                    botones.forEach(boton => {
-                        boton.style.display = "block";
-                    });
-                });
-            });
-        });
-
-        //FUNCIONALIDAD CHECKBOX PARA FINALIZAR PEDIDO EN TABLA
-        const checkboxes = document.querySelectorAll('.btn-check'); // Selecciona los checkboxes tipo btn-check
-        const btnGuardar = document.getElementById('btn-guardar');
-        const guardar = document.getElementById('guardar');
-        guardar.checked = true;
-
-        const config = {
-            "efectivo": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" },
-            "nequi": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" },
-            "davip": { icon: "bi bi-coin", text: "COBRAR", color: "btn-success" }
-        };
-
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                if (this.checked) {
-                    // Desactivar otros checkboxes
-                    checkboxes.forEach(cb => {
-                        if (cb !== this) cb.checked = false;
-                    });
-
-                    // Cambiar botón
-                    const metodo = config[this.id];
-                    btnGuardar.innerHTML = `<i class="${metodo.icon} me-1"></i>${metodo.text}`;
-                    btnGuardar.className = `btn ${metodo.color}`;
-                } else {
-                    resetButton();
-                    guardar.checked = true;
-                }
-            });
-        });
-
-        function resetButton() {
-            btnGuardar.innerHTML = `Actualizar`;
-            btnGuardar.className = "btn btn-primary";
-        }
-
-        //FUNCIONALIDAD FACTURACION DE PEDIDO EN TABLA Y FORMULARIO
-        const productoBtns = document.querySelectorAll('.producto-btn');
-        const tablaBody = document.querySelector('#tabla-productos tbody');
-        const totalTabla = document.querySelector('.total-tabla');
-        const productosForm = document.querySelector('#productos-form');
-
-        let nuevoTotal = parseInt(totalTabla.value) || 0; 
-        totalTabla.value = nuevoTotal;
-
-        //Funcion: Calcular precio total de productos seleccionados en tabla
-        const actualizarTotal = (monto) => {
-            nuevoTotal += monto;
-            totalTabla.value = nuevoTotal;
-        };
-
-        //Funcion: agregar o eliminar productos en formulario oculto
-        const actualizarProductosForm = (idProducto, cantidad) => {
-            const productosActuales = JSON.parse(productosForm.value || '{}');
-            if (cantidad > 0) {
-                productosActuales[idProducto] = cantidad;
-            } else {
-                delete productosActuales[idProducto];
+            function resetButton() {
+                btnGuardar.innerHTML = `Actualizar`;
+                btnGuardar.className = "btn btn-primary";
             }
-            productosForm.value = JSON.stringify(productosActuales);
-        };
 
-        //FUNCION: Asignar eventos a una fila
-        const asignarEventosFila = (fila, idProducto, precioUnitario) => {
-            const cantidadCell = fila.querySelector('.producto-cantidad');
-            const precioCell = fila.querySelector('.producto-precio');
+            //FUNCIONALIDAD FACTURACION DE PEDIDO EN TABLA Y FORMULARIO
+            const productoBtns = document.querySelectorAll('.producto-btn');
+            const tablaBody = document.querySelector('#tabla-productos tbody');
+            const totalTabla = document.querySelector('.total-tabla');
+            const productosForm = document.querySelector('#productos-form');
 
-            //Evento: añadir producto, cantidad y precio en fila seleccionada
-            fila.querySelector('.add-btn').addEventListener('click', () => {
-                const nuevaCantidad = parseInt(cantidadCell.textContent) + 1;
-                cantidadCell.textContent = nuevaCantidad;
-                precioCell.textContent = `$${nuevaCantidad * precioUnitario}`;
+            let nuevoTotal = parseInt(totalTabla.value) || 0; 
+            totalTabla.value = nuevoTotal;
+
+            //Funcion: Calcular precio total de productos seleccionados en tabla
+            const actualizarTotal = (monto) => {
+                nuevoTotal += monto;
+                totalTabla.value = nuevoTotal;
+            };
+
+            //Funcion: agregar o eliminar productos en formulario oculto
+            const actualizarProductosForm = (idProducto, cantidad) => {
+                const productosActuales = JSON.parse(productosForm.value || '{}');
+                if (cantidad > 0) {
+                    productosActuales[idProducto] = cantidad;
+                } else {
+                    delete productosActuales[idProducto];
+                }
+                productosForm.value = JSON.stringify(productosActuales);
+            };
+
+            //FUNCION: Asignar eventos a una fila
+            const asignarEventosFila = (fila, idProducto, precioUnitario) => {
+                const cantidadCell = fila.querySelector('.producto-cantidad');
+                const precioCell = fila.querySelector('.producto-precio');
+
+                //Evento: añadir producto, cantidad y precio en fila seleccionada
+                fila.querySelector('.add-btn').addEventListener('click', () => {
+                    const nuevaCantidad = parseInt(cantidadCell.textContent) + 1;
+                    cantidadCell.textContent = nuevaCantidad;
+                    precioCell.textContent = `$${nuevaCantidad * precioUnitario}`;
+
+                    actualizarTotal(precioUnitario);
+                    actualizarProductosForm(idProducto, nuevaCantidad);
+                });
+
+                //Evento: restar producto, cantidad y precio en fila seleccionada. Eliminar fila si la cantidad pasa de 1 a 0
+                fila.querySelector('.restar-btn').addEventListener('click', () => {
+                    let cantidadActual = parseInt(cantidadCell.textContent);
+                    if (cantidadActual > 1) {
+                        cantidadActual -= 1;
+                        cantidadCell.textContent = cantidadActual;
+                        precioCell.textContent = `$${cantidadActual * precioUnitario}`;
+
+                        actualizarTotal(-precioUnitario);
+                        actualizarProductosForm(idProducto, cantidadActual);
+                    } else {
+                        fila.remove();
+                        actualizarTotal(-precioUnitario);
+                        actualizarProductosForm(idProducto, 0);
+                    }
+                });
+
+                //Evento: Eliminar fila de producto seleccionado 
+                fila.querySelector('.remover-btn').addEventListener('click', () => {
+                    const cantidadActual = parseInt(cantidadCell.textContent);
+                    actualizarTotal(-precioUnitario * cantidadActual);
+                    fila.remove();
+                    actualizarProductosForm(idProducto, 0);
+                });
+            };
+
+            //FUNCION: Inicializar eventos de las filas ya existentes
+            const inicializarFilasExistentes = () => {
+                // Recorrer las filas de productos ya existentes
+                const filasExistentes = document.querySelectorAll('#tabla-productos tbody tr');
+                filasExistentes.forEach(fila => {
+                    const idProducto = fila.querySelector('.producto-nombre').getAttribute('data-id-producto');
+                    const precioUnitario = parseInt(fila.querySelector('.producto-precio').getAttribute('data-precio-producto'));
+                    asignarEventosFila(fila, idProducto, precioUnitario);
+                });
+            };
+
+            //FUNCION: para inicializar las filas ya existentes
+            inicializarFilasExistentes();
+
+            //FUNCION: Agregar fila por producto seleccionado (1ra vez)
+            const crearFilaProducto = (idProducto, nombreProducto, precioUnitario, cantidad = 1) => {
+                const nuevaFila = document.createElement('tr');
+                nuevaFila.innerHTML = `
+                    <td class="producto-cantidad text-center">${cantidad}</td>
+                    <td class="producto-nombre text-center">${nombreProducto}</td>
+                    <td class="producto-precio text-center">$${precioUnitario * cantidad}</td>
+                    <td class="text-center">
+                        <button class="btn btn-success btn-sm add-btn">+</button>
+                        <button class="btn btn-warning btn-sm restar-btn">-</button>
+                        <button class="btn btn-danger btn-sm remover-btn">x</button>
+                    </td>
+                `;
+                tablaBody.appendChild(nuevaFila);
+
+                asignarEventosFila(nuevaFila, idProducto, precioUnitario);
+            };
+
+            //FUNCION: Obtención de producto, precio y nombre al seleccionar producto
+            const manejarProductoSeleccionado = (btn) => {
+                const idProducto = btn.getAttribute('data-id-producto');
+                const nombreProducto = btn.getAttribute('data-nombre');
+                const precioUnitario = parseInt(btn.getAttribute('data-precio'));
 
                 actualizarTotal(precioUnitario);
-                actualizarProductosForm(idProducto, nuevaCantidad);
-            });
 
-            //Evento: restar producto, cantidad y precio en fila seleccionada. Eliminar fila si la cantidad pasa de 1 a 0
-            fila.querySelector('.restar-btn').addEventListener('click', () => {
-                let cantidadActual = parseInt(cantidadCell.textContent);
-                if (cantidadActual > 1) {
-                    cantidadActual -= 1;
-                    cantidadCell.textContent = cantidadActual;
-                    precioCell.textContent = `$${cantidadActual * precioUnitario}`;
+                //Verificación de producto ya existente en fila 
+                const productoExistente = Array.from(tablaBody.querySelectorAll('tr')).find(row => {
+                    const productoNombreCell = row.querySelector('.producto-nombre');
+                    return productoNombreCell && productoNombreCell.textContent.trim().toLowerCase() === nombreProducto.trim().toLowerCase();
+                });
 
-                    actualizarTotal(-precioUnitario);
-                    actualizarProductosForm(idProducto, cantidadActual);
+                //Aplicación de funciones según condición
+                if (!productoExistente) {
+                    crearFilaProducto(idProducto, nombreProducto, precioUnitario);
+                    actualizarProductosForm(idProducto, 1);
                 } else {
-                    fila.remove();
-                    actualizarTotal(-precioUnitario);
-                    actualizarProductosForm(idProducto, 0);
+                    const cantidadCell = productoExistente.querySelector('.producto-cantidad');
+                    const nuevaCantidad = parseInt(cantidadCell.textContent) + 1;
+                    cantidadCell.textContent = nuevaCantidad;
+
+                    const precioCell = productoExistente.querySelector('.producto-precio');
+                    precioCell.textContent = `$${nuevaCantidad * precioUnitario}`;
+
+                    actualizarProductosForm(idProducto, nuevaCantidad);
                 }
+            };
+
+            //EVENTO: Seleccionar producto y aplicar funcionalidad
+            productoBtns.forEach(btn => {
+                btn.addEventListener('click', () => manejarProductoSeleccionado(btn));
             });
-
-            //Evento: Eliminar fila de producto seleccionado 
-            fila.querySelector('.remover-btn').addEventListener('click', () => {
-                const cantidadActual = parseInt(cantidadCell.textContent);
-                actualizarTotal(-precioUnitario * cantidadActual);
-                fila.remove();
-                actualizarProductosForm(idProducto, 0);
-            });
-        };
-
-        //FUNCION: Inicializar eventos de las filas ya existentes
-        const inicializarFilasExistentes = () => {
-            // Recorrer las filas de productos ya existentes
-            const filasExistentes = document.querySelectorAll('#tabla-productos tbody tr');
-            filasExistentes.forEach(fila => {
-                const idProducto = fila.querySelector('.producto-nombre').getAttribute('data-id-producto');
-                const precioUnitario = parseInt(fila.querySelector('.producto-precio').getAttribute('data-precio-producto'));
-                asignarEventosFila(fila, idProducto, precioUnitario);
-            });
-        };
-
-        //FUNCION: para inicializar las filas ya existentes
-        inicializarFilasExistentes();
-
-        //FUNCION: Agregar fila por producto seleccionado (1ra vez)
-        const crearFilaProducto = (idProducto, nombreProducto, precioUnitario, cantidad = 1) => {
-            const nuevaFila = document.createElement('tr');
-            nuevaFila.innerHTML = `
-                <td class="producto-cantidad text-center">${cantidad}</td>
-                <td class="producto-nombre text-center">${nombreProducto}</td>
-                <td class="producto-precio text-center">$${precioUnitario * cantidad}</td>
-                <td class="text-center">
-                    <button class="btn btn-success btn-sm add-btn">+</button>
-                    <button class="btn btn-warning btn-sm restar-btn">-</button>
-                    <button class="btn btn-danger btn-sm remover-btn">x</button>
-                </td>
-            `;
-            tablaBody.appendChild(nuevaFila);
-
-            asignarEventosFila(nuevaFila, idProducto, precioUnitario);
-        };
-
-        //FUNCION: Obtención de producto, precio y nombre al seleccionar producto
-        const manejarProductoSeleccionado = (btn) => {
-            const idProducto = btn.getAttribute('data-id-producto');
-            const nombreProducto = btn.getAttribute('data-nombre');
-            const precioUnitario = parseInt(btn.getAttribute('data-precio'));
-
-            actualizarTotal(precioUnitario);
-
-            //Verificación de producto ya existente en fila 
-            const productoExistente = Array.from(tablaBody.querySelectorAll('tr')).find(row => {
-                const productoNombreCell = row.querySelector('.producto-nombre');
-                return productoNombreCell && productoNombreCell.textContent.trim().toLowerCase() === nombreProducto.trim().toLowerCase();
-            });
-
-            //Aplicación de funciones según condición
-            if (!productoExistente) {
-                crearFilaProducto(idProducto, nombreProducto, precioUnitario);
-                actualizarProductosForm(idProducto, 1);
-            } else {
-                const cantidadCell = productoExistente.querySelector('.producto-cantidad');
-                const nuevaCantidad = parseInt(cantidadCell.textContent) + 1;
-                cantidadCell.textContent = nuevaCantidad;
-
-                const precioCell = productoExistente.querySelector('.producto-precio');
-                precioCell.textContent = `$${nuevaCantidad * precioUnitario}`;
-
-                actualizarProductosForm(idProducto, nuevaCantidad);
-            }
-        };
-
-        //EVENTO: Seleccionar producto y aplicar funcionalidad
-        productoBtns.forEach(btn => {
-            btn.addEventListener('click', () => manejarProductoSeleccionado(btn));
         });
-    });
 
-</script>
+    </script>
+</body>
+
 {% endblock %}

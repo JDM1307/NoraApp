@@ -70,10 +70,10 @@
                         <td class="text-start">{{ cr.usuario.username|default:"?" }}</td>
                         <td class="text-start">{{ cr.creado_en }}</td>
                         <td class="text-start">
-                            {% if cr.creado_en != cr.actualizado_en %} 
-                                <i class="bi bi-pencil-square text-warning"></i>
+                            {% if cr.actualizado_en %} 
+                                <i class="bi bi-pencil-square text-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ cr.actualizado_en }}"></i>
                             {% else %}
-                            <i class="bi bi-check-square text-success"></i>
+                                <i class="bi bi-check-square text-success"></i>
                             {% endif %}
                         </td>
                         {% if request.user.is_superuser %}

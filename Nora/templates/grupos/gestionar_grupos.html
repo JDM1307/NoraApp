@@ -34,6 +34,9 @@
                 <tr>
                     <th class="text-start border-end border-dark">#</th>
                     <th class="text-start">Nombre Grupo</th>
+                    <th class="text-satrt">Creado</th>
+                    <th class="text-satrt">Estado</th>
+                    <th class="text-start">Responsable</th>
                     <th class="text-start">Acciones</th>
                 </tr>
             </thead>
@@ -42,6 +45,16 @@
                     <tr>
                         <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
                         <td class="text-start">{{ grupo.nombre_grupo }}</td>
+                        <td class="text-start">{{ grupo.creado_en }}</td>
+                        <td class="text-start">
+                            {% if grupo.actualizado_en %} 
+                                <i class="bi bi-pencil-square text-warning"
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ grupo.actualizado_en }}"></i>
+                            {% else %}
+                                <i class="bi bi-check-square text-success"></i>
+                            {% endif %}
+                        </td>
+                        <td class="text-start">{{ grupo.usuario.username|default:"?" }}</td>
                         <td class="text-start">
                             <a class="btn btn-sm btn-warning" href="{% url 'editar_grupo' grupo.id %}"
                             data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
