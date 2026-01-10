@@ -23,11 +23,13 @@ def login(request):
                 user = form.get_user()
                 auth_login(request, user)
                 messages.success(request, f'{user.username} Ha iniciado sesión')
+
                 # Validar existencia de base
                 hoy = localtime(now()).date()
                 inicio_dia = make_aware(datetime.combine(hoy, datetime.min.time()))  # 00:00:00
                 fin_dia = make_aware(datetime.combine(hoy, datetime.max.time()))    # 23:59:59
                 base_hoy = Base.objects.filter(creado_en__range=(inicio_dia, fin_dia)).exists()
+                
                 if base_hoy:
                     return redirect('index')
                 else:
@@ -113,15 +115,15 @@ def gestionar_bases(request):
     
 @login_required
 def agregar_base(request):
+    # Validar existencia de una base para el dia actual
+    hoy = localtime(now()).date()
+    inicio_dia = make_aware(datetime.combine(hoy, datetime.min.time()))  # 00:00:00
+    fin_dia = make_aware(datetime.combine(hoy, datetime.max.time()))    # 23:59:59
+    existe_base = Base.objects.filter(creado_en__range=(inicio_dia, fin_dia)).exists()
     try:
         if request.method == 'POST':  
             base_dia = request.POST.get('base_dia')
             observacion = request.POST.get('base_observacion')
-            # Validar existencia de una base para el dia actual
-            hoy = localtime(now()).date()
-            inicio_dia = make_aware(datetime.combine(hoy, datetime.min.time()))  # 00:00:00
-            fin_dia = make_aware(datetime.combine(hoy, datetime.max.time()))    # 23:59:59
-            existe_base = Base.objects.filter(creado_en__range=(inicio_dia, fin_dia)).exists()
             if existe_base:
                 messages.warning(request, 'Ya existe una base para el dia hoy')
                 return redirect('index')
@@ -147,7 +149,7 @@ def agregar_base(request):
     except Exception as e:
         return render(request, 'errores/error_general.html', {'error_message': str(e)})
     
-    return render(request, 'bases/agregar_base.html')
+    return render(request, 'bases/agregar_base.html', {'existe_base': existe_base})
 
 @login_required
 def editar_base(request, base_id):
@@ -571,11 +573,11 @@ def editar_mesa(request, mesa_id):
                 mesa.usuario = usuario
                 mesa.actualizado_en = now
                 mesa.save()
-                messages.success(request, f'Mesa {mesa} actualizada exitosamente.')
+                messages.success(request, f'Mesa {numero} actualizada exitosamente.')
                 return redirect('gestionar_mesas')
             except IntegrityError:
-                messages.error(request, f'Error: La mesa {mesa} ya existe')
-            except (ValueError) as e:
+                messages.error(request, f'Error: La mesa {numero} ya existe')
+            except ValueError as e:
                 messages.error(request, f'Error: {e}')
             return redirect('editar_mesa', mesa_id=mesa_id)
 

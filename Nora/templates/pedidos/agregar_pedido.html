@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Agregar Pedido{% endblock %}
 {% block content %}
-<body data-page="agregar_pedido" data-key_create="crear-pedido">
-    <main>
+    <main id="page" data-page="Pedidos" data-key_create="enable">
         <section class="card text-bg-secondary">
             <header class="card-header d-flex justify-content-between">
                 <h3>Agregar Pedido</h3>
@@ -92,7 +91,7 @@
                             <div class="row row-cols-3">
                                 {% for grupo in grupos %}
                                     <div class="col d-flex justify-content-center mb-4">
-                                        <button 
+                                        <button
                                             class="btn btn-custom rectangle-btn" 
                                             type="button" 
                                             data-bs-toggle="offcanvas" 
@@ -371,5 +370,4 @@
             });
         });
     </script>
-</body>
 {% endblock %}

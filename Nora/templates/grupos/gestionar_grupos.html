@@ -1,79 +1,79 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Grupos{% endblock %}
 {% block content %}
-<body data-page="gestionar_grupos" data-key_delete="eliminar_grupos">
-    <!--Filtros y agregar Grupos-->
-    <section class="card text-bg-secondary mb-3">
-        <header class="card-header">
-            <div class="d-flex justify-content-between">
-                <h3>Gestionar Grupos</h3>
-                <a class="btn btn-primary d-flex align-items-center" href="{% url 'agregar_grupo' %}">
-                    <i class="bi bi-plus-square me-1"></i>Agregar
-                </a>
-            </div>
-        </header>
-        <footer class="card-body">
-            <form method="get" action="{% url 'gestionar_grupos' %}">
-                <div class="d-flex justify-content-start">
-                    <fieldset class="m-2">
-                        <label class="form-label" for="buscar_grupo">Buscar grupos</label>
-                        <input class="form-control" id="buscar_grupo" autocomplete="off" type="text" name="q" 
-                        value="{{ query }}" placeholder="Digite nombre del grupo">
-                    </fieldset>
-                    <fieldset class="d-flex align-items-end m-2">
-                        <button class="btn btn-success" type="submit">Buscar</button>
-                    </fieldset>
+    <main id="page"  data-page="grupos" data-tables="enable" data-key_delete="enable">
+        <!--Filtros y agregar Grupos-->
+        <section class="card text-bg-secondary mb-3">
+            <header class="card-header">
+                <div class="d-flex justify-content-between">
+                    <h3>Gestionar Grupos</h3>
+                    <a class="btn btn-primary d-flex align-items-center" href="{% url 'agregar_grupo' %}">
+                        <i class="bi bi-plus-square me-1"></i>Agregar
+                    </a>
                 </div>
-            </form>
-        </footer>
-    </section>
-    <!--Tabla Grupos-->
-    <section class="card text-bg-secondary p-3">
-        <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
-            <thead class="table-secondary">
-                <tr>
-                    <th class="text-start border-end border-dark">#</th>
-                    <th class="text-start">Nombre Grupo</th>
-                    <th class="text-satrt">Creado</th>
-                    <th class="text-satrt">Estado</th>
-                    <th class="text-start">Responsable</th>
-                    <th class="text-start">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for grupo in grupos%}
+            </header>
+            <footer class="card-body">
+                <form method="get" action="{% url 'gestionar_grupos' %}">
+                    <div class="d-flex justify-content-start">
+                        <fieldset class="m-2">
+                            <label class="form-label" for="buscar_grupo">Buscar grupos</label>
+                            <input class="form-control" id="buscar_grupo" autocomplete="off" type="text" name="q" 
+                            value="{{ query }}" placeholder="Digite nombre del grupo">
+                        </fieldset>
+                        <fieldset class="d-flex align-items-end m-2">
+                            <button class="btn btn-success" type="submit">Buscar</button>
+                        </fieldset>
+                    </div>
+                </form>
+            </footer>
+        </section>
+        <!--Tabla Grupos-->
+        <section class="card text-bg-secondary p-3">
+            <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
+                <thead class="table-secondary">
                     <tr>
-                        <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
-                        <td class="text-start">{{ grupo.nombre_grupo }}</td>
-                        <td class="text-start">{{ grupo.creado_en }}</td>
-                        <td class="text-start">
-                            {% if grupo.actualizado_en %} 
-                                <i class="bi bi-pencil-square text-warning"
-                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ grupo.actualizado_en }}"></i>
-                            {% else %}
-                                <i class="bi bi-check-square text-success"></i>
-                            {% endif %}
-                        </td>
-                        <td class="text-start">{{ grupo.usuario.username|default:"?" }}</td>
-                        <td class="text-start">
-                            <a class="btn btn-sm btn-warning" href="{% url 'editar_grupo' grupo.id %}"
-                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a class="btn btn-sm btn-danger delete-btn"
-                            data-id="{{ grupo.id }}"
-                            data-delete_url="eliminar/{{ grupo.id }}/"
-                            data-msj_delete="¿Está seguro que desea eliminar el grupo: {{ grupo.nombre_grupo }}?"
-                            data-bs-toggle="tooltip" 
-                            data-bs-placement="right" 
-                            data-bs-title="Eliminar">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
+                        <th class="text-start border-end border-dark">#</th>
+                        <th class="text-start">Nombre Grupo</th>
+                        <th class="text-satrt">Creado</th>
+                        <th class="text-satrt">Estado</th>
+                        <th class="text-start">Responsable</th>
+                        <th class="text-start">Acciones</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </section>
-</body>
+                </thead>
+                <tbody>
+                    {% for grupo in grupos%}
+                        <tr>
+                            <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
+                            <td class="text-start">{{ grupo.nombre_grupo }}</td>
+                            <td class="text-start">{{ grupo.creado_en }}</td>
+                            <td class="text-start">
+                                {% if grupo.actualizado_en %} 
+                                    <i class="bi bi-pencil-square text-warning"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ grupo.actualizado_en }}"></i>
+                                {% else %}
+                                    <i class="bi bi-check-square text-success"></i>
+                                {% endif %}
+                            </td>
+                            <td class="text-start">{{ grupo.usuario.username|default:"?" }}</td>
+                            <td class="text-start">
+                                <a class="btn btn-sm btn-warning" href="{% url 'editar_grupo' grupo.id %}"
+                                data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a class="btn btn-sm btn-danger delete-btn"
+                                data-id="{{ grupo.id }}"
+                                data-delete_url="eliminar/{{ grupo.id }}/"
+                                data-msj_delete="¿Está seguro que desea eliminar el grupo: {{ grupo.nombre_grupo }}?"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="right" 
+                                data-bs-title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
 {% endblock %}

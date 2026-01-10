@@ -2,35 +2,31 @@
 {% load static %}
 {% block title %}Barra{% endblock %}
 {% block content %}
-<body data-page="index" data-url="{% url 'obtener_mesas' %}">
-    <!--Mesas-->
-    <section>
-        <header>
-            <h3 class="text-light text-center">
-                - <i class="bi bi-grid-3x3 me-2"></i>Barra -
-            </h3>
-        </header>
-        <div class="row row-cols-4">
+    <main class="w-100 p-3 ps-2 pe-0" id="page" data-page="Barra">
+        <!--Mesas-->
+        <section class="row row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-2 row-gap-4" 
+            id="data-url" data-url="{% url 'obtener_mesas' %}">
             {% for mesa in mesas %}
-            <a href="#" class="link-underline link-underline-opacity-0 col-lg-2 col-md-2 col-4 mesa-{{ mesa.numero_mesa }}">
-                <div class="card mb-4 p-2 card-hover bg-navbar text-light">
-                    <div class="card-header">
-                        <span class="badge text-bg-warning rounded-pill mesa-badge d-none">
-                            <i class="bi bi-currency-dollar me-1"></i>
-                            <small class="me-1">{{ mesa.total_pedido }}</small>
-                        </span>
-                        <img src="{% static 'default_images/mesa.png' %}" class="card-img-top">
+            <div class="">
+                <a href="#" class="link-underline link-underline-opacity-0 p-0 mesa-{{ mesa.numero_mesa }}">
+                    <div class="card p-2 card-hover bg-navbar text-light">
+                        <div class="card-header">
+                            <span class="badge text-bg-warning rounded-pill mesa-badge d-none">
+                                <i class="bi bi-currency-dollar me-1"></i>
+                                <small class="me-1">{{ mesa.total_pedido }}</small>
+                            </span>
+                            <img src="{% static 'default_images/mesa.png' %}" class="card-img-top">
+                        </div>
+                        <div class="card-body border-top text-center p-0">
+                            <h4 class="m-0">Mesa {{ mesa.numero_mesa }}</h4>
+                            <p class="m-0">{% if mesa.estado_mesa == 1 %}Ocupada{% else %}Disponible{% endif %}</p>
+                        </div>
                     </div>
-                    <div class="card-body border-top text-center p-0">
-                        <h4 class="m-0">Mesa {{ mesa.numero_mesa }}</h4>
-                        <p class="m-0">{% if mesa.estado_mesa == 1 %}Ocupada{% else %}Disponible{% endif %}</p>
-                    </div>
-                </div>
-            </a>
+                </a>
+            </div>
             {% endfor %}
-        </div>
-    </section>
-</body>
-{% endblock %}
+        </section>
+    </main>
+{% endblock %}|
 
 

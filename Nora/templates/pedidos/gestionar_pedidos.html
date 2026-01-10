@@ -1,112 +1,129 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Pedidos{% endblock %}
 {% block content %}
-<body data-page="gestionar_productos" data-key_delete="eliminar_productos">
-    <!--filtros Pedidos-->
-    <section class="card text-bg-secondary mb-3">
-        <header class="card-header d-flex justify-content-between">
-            <h3>Gestionar Pedidos</h3>
-            <a class="btn btn-primary d-flex align-items-center" href="{% url 'index' %}">
-                <i class="bi bi-plus-square me-1"></i>Nuevo
-            </a>
-        </header>
-        <footer class="card-body">
-            <form method="get" action="{% url 'gestionar_pedidos' %}">
-                <div class="d-flex justify-content-start flex-wrap">
-                    <fieldset class="m-2">
-                        <label class="form-label">Buscar Pedidos</label>
-                        <input class="form-control" autocomplete="off" type="number" name="q" value="{{ query }}" placeholder="Digite número del pedido">
-                    </fieldset>
-                    
-                    <fieldset class="m-2">
-                        <label class="form-label">Fecha Inicio</label>
-                        <input class="form-control" type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
-                    </fieldset>
-            
-                    <fieldset class="m-2">
-                        <label class="form-label">Fecha Fin</label>
-                        <input class="form-control" type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
-                    </fieldset>
-            
-                    <fieldset class="m-2">
-                        <label class="form-label">Medio de pago</label>
-                        <select class="form-control" name="medio_pago">
-                            <option value="">Todos</option>
-                            <option value="2" {% if estado == "2" %}selected{% endif %}>Efectivo</option>
-                            <option value="3" {% if estado == "3" %}selected{% endif %}>Nequi</option>
-                            <option value="4" {% if estado == "4" %}selected{% endif %}>Daviplata</option>
-                        </select>
-                    </fieldset>
-            
-                    <fieldset class="d-flex align-items-end m-2">
-                        <button class="btn btn-success" type="submit">Buscar</button>
-                    </fieldset>
-                </div>
-            </form>
-        </footer>
-    </section>
-    <!--Tabla pedidos-->
-    <section class="card card text-bg-secondary p-3">
-        <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
-            <thead class="table-secondary">
-                <tr>
-                    <th class="text-start border-end border-dark">#</th>
-                    <th class="text-start">Pedido</th>
-                    <th class="text-start">Mesa</th>
-                    <th class="text-start">Total</th>
-                    <th class="text-start">Medio de pago</th>
-                    <th class="text-start">Entró</th>
-                    <th class="text-start">Finalizó</th>
-                    <th class="text-start">Responsable</th>
-                    <th class="text-start">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for pedido in pedidos %}
-                    {% if pedido.estado_pedido != 1 %} 
-                        <tr>
-                            <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
-                            <td class="text-start">{{ pedido.numero_pedido }}</td>
-                            <td class="text-start">{{ pedido.mesa_id }}</td>
-                            <td class="text-start">${{ pedido.total_pedido }}</td>
-                            <td class="text-start">
-                                {% if pedido.estado_pedido == 2 %}
-                                    <span class="badge bg-success">Efectivo</span>
-                                {% elif pedido.estado_pedido == 3 %}
-                                    <span class="badge bg-primary">Nequi</span>
-                                {% elif pedido.estado_pedido == 4 %}
-                                    <span class="badge bg-danger">Daviplata</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-start">{{ pedido.creado_en }}</td>
-                            <td class="text-start">{{ pedido.actualizado_en }}</td>
-                            <td class="text-start">{{ pedido.usuario.username|default:"?" }}</td>
-                            <td class="text-start">
-                                <a class="btn btn-sm btn-light" href="{% url 'ver_pedido' pedido.numero_pedido %}"
-                                data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Ver">
-                                    <i class="bi bi-eye"></i>
-                                </a>
+    <main class="w-100 p-3 ps-2 pe-0 d-flex flex-column gap-3" id="page" 
+    data-page="Pedidos" data-tables="enable"  data-key_delete="enable">
+        <section class="card text-bg-secondary">
+            <div class="card-header d-flex justify-content-between">
+                <h3 class="fw-bold">Gestionar Pedidos</h3>
+                <button class="btn btn-outline-warning" id="backButton">
+                    <i class="bi bi-arrow-90deg-left me-1"></i> Volver
+                </button>
+            </div>
+            <!--Filtros de busqueda-->
+            <div class="card-body">
+                <form method="get">
+                    {% csrf_token %}
+                    <h5 class="fw-bold">Busca registros por:</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <fieldset class="filter rounded p-1">
+                            <label class="form-label" for="buscar_pedidos" >Pedido</label>
+                            <input  class="form-control" id="buscar_pedidos"  type="number" name="q"  
+                            value="{{ query }}" placeholder="Digite un número..." autocomplete="off">
+                        </fieldset>
+                        <fieldset class="filter rounded p-1">
+                            <label class="form-label" for="medio_pago">Medio de pago</label>
+                            <select class="form-select" id="medio_pago"  name="medio_pago">
+                                <option value="">Seleccionar</option>
+                                <option value="2" {% if estado == "2" %}selected{% endif %}>Efectivo</option>
+                                <option value="3" {% if estado == "3" %}selected{% endif %}>Nequi</option>
+                                <option value="4" {% if estado == "4" %}selected{% endif %}>Daviplata</option>
+                            </select>
+                        </fieldset>
+                        <fieldset class="d-flex flex-wrap gap-1 filter rounded p-1">
+                            <fieldset>
+                                <label class="form-label" for="desde">Fecha desde</label>
+                                <input class="form-control" id="desde" type="date" name="fecha_inicio" 
+                                value="{{ request.GET.fecha_inicio }}">
+                            </fieldset>
+                            <fieldset class="border-start border-secondary ps-1">
+                                <label class="form-label" for="hasta">Fecha hasta</label>
+                                <input class="form-control" id="hasta" type="date" name="fecha_fin" 
+                                value="{{ request.GET.fecha_fin }}">
+                            </fieldset>
+                        </fieldset>
+                        <fieldset class="d-flex align-items-end">
+                            <button class="btn btn-outline-success border text-light" type="submit">
+                                <i class="bi bi-search me-1"></i></i>Buscar
+                            </button>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <section class="card text-bg-secondary p-3">
+            <!--Tabla pedidos-->
+            <table id="mi-tabla" class="table table-dark 
+            table-hover border border-secondary">
+                <thead class="table-secondary text-truncate">
+                    <tr>
+                        <th class="text-start border-end border-dark">#</th>
+                        <th class="text-start">Pedido</th>
+                        <th class="text-start">Mesa</th>
+                        <th class="text-start">Total</th>
+                        <th class="text-start">Medio de pago</th>
+                        <th class="text-start">Entró</th>
+                        <th class="text-start">Finalizó</th>
+                        {% if request.user.is_superuser %}
+                            <th class="text-start">Responsable</th>
+                        {% endif %}
+                        <th class="text-start">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pedido in pedidos %}
+                        {% if pedido.estado_pedido != 1 %} 
+                            <tr>
+                                <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
+                                <td class="text-start">{{ pedido.numero_pedido }}</td>
+                                <td class="text-start">{{ pedido.mesa_id }}</td>
+                                <td class="text-start format-numbers"> {{ pedido.total_pedido }}</td>
+                                <td class="text-start">
+                                    {% if pedido.estado_pedido == 2 %}
+                                        <span class="badge border border-success text-success">Efectivo</span>
+                                    {% elif pedido.estado_pedido == 3 %}
+                                        <span class="badge border border-primary text-primary">Nequi</span>
+                                    {% elif pedido.estado_pedido == 4 %}
+                                        <span class="badge border border-danger text-danger">Daviplata</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-start text-orange">
+                                    <i class="bi bi-box-arrow-in-down-left" data-bs-toggle="tooltip"
+                                     data-bs-placement="top" data-bs-title="{{ pedido.creado_en }}"></i>
+                                </td>
+                                <td class="text-start text-secondary">
+                                    <i class="bi bi-box-arrow-up-right" data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" data-bs-title="{{ pedido.actualizado_en }}"></i>
+                                </td>
                                 {% if request.user.is_superuser %}
-                                    <a class="btn btn-sm btn-warning" href="{% url 'editar_pedido' pedido.numero_pedido %}"
-                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a class="btn btn-sm btn-danger delete-btn"
-                                        data-id="{{ pedido.numero_pedido }}"
-                                        data-delete_url="eliminar/{{ pedido.numero_pedido }}/"
-                                        data-msj_delete="¿Está seguro que desea eliminar el pedido: {{ pedido.numero_pedido }}?"
-                                        data-bs-toggle="tooltip" 
-                                        data-bs-placement="right"
-                                        data-bs-title="Eliminar">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                    <td class="text-start">{{ pedido.usuario.username|default:"?" }}</td>
                                 {% endif %}
-                            </td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-    </section>
-</body>
+                                    <td>
+                                    <a class="btn btn-sm btn-outline-light btn-action"  data-bs-toggle="tooltip" 
+                                    data-bs-placement="left" 
+                                    data-bs-title="Ver" href="{% url 'ver_pedido' pedido.numero_pedido %}">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    {% if request.user.is_superuser %}
+                                        <a class="btn btn-sm btn-outline-warning  btn-action" data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        data-bs-title="Editar" href="{% url 'editar_pedido' pedido.numero_pedido %}"
+                                         >
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a class="btn btn-sm btn-outline-danger btn-action delete-btn"
+                                            data-delete_url="eliminar/{{ pedido.numero_pedido }}/"
+                                            data-msj_delete="Está seguro que desea eliminar el pedido: {{ pedido.numero_pedido }}"
+                                            data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
 {% endblock %}

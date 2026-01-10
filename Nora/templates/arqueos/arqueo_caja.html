@@ -1,44 +1,46 @@
 {% extends "base.html" %}
 {% block title %}Generar Arqueo{% endblock %}
 {% block content %}
-{% load humanize %}
-<body data-page="arqueos" data-info="Mostrando arqueo de caja">
-    <main class="d-flex flex-column justify-content-start align-items-center">
-        <!--Filtros-->
-        <section class="card text-bg-secondary mb-3">
-            <header class="card-header">
-                <div class="d-flex justify-content-between">
-                    <h3>Generar Arqueo</h3>
-                    <a class="btn btn-warning d-flex align-items-center" href="{% url 'index' %}">
-                        <i class="bi bi-arrow-90deg-left me-2"></i> Volver
-                    </a>
-                </div>
+    <main class="p-3 pe-0 d-flex flex-column gap-3 align-items-center" id="page" 
+    data-page="arqueos">
+        <section class="card text-bg-secondary">
+            <header class="card-header d-flex justify-content-between">
+                <h3 class="fw-bold">Arqueos</h3>
+                <button class="btn btn-outline-warning" id="backButton">
+                    <i class="bi bi-arrow-90deg-left me-1"></i> Volver
+                </button>
             </header>
+            <!--Filtros y busqueda-->
             <div class="card-body">
                 <form method="get" action="">
-                    <div class="d-flex justify-content-start flex-wrap">
-                        <fieldset class="m-2">
-                            <label class="form-label">Fecha Desde</label>
-                            <input class="form-control" type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+                    {% csrf_token %}
+                    <h5 class="fw-bold">Generar arqueo por:</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <fieldset class="d-flex flex-wrap gap-1 filter rounded p-1">
+                            <fieldset>
+                                <label class="form-label" for="desde">Fecha desde</label>
+                                <input class="form-control" id="desde" type="date" name="fecha_inicio" 
+                                value="{{ request.GET.fecha_inicio }}">
+                            </fieldset>
+                            <fieldset class="border-start border-secondary ps-1">
+                                <label class="form-label" for="hasta">Fecha hasta</label>
+                                <input class="form-control" id="hasta" type="date" name="fecha_fin" 
+                                value="{{ request.GET.fecha_fin }}">
+                            </fieldset>
                         </fieldset>
-                        <fieldset class="m-2">
-                            <label class="form-label">Fecha Hasta</label>
-                            <input class="form-control" type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
-                        </fieldset>
-                        <fieldset class="d-flex align-items-end m-2">
-                            <button class="btn btn-success" type="submit" name="buscar">Buscar</button>
+                        <fieldset class="d-flex align-items-end">
+                            <button class="btn btn-outline-success border text-light" type="submit">
+                                <i class="bi bi-play me-1"></i></i>Generar
+                            </button>
                         </fieldset>
                     </div>
                 </form>
             </div>
         </section>
         <!--Tabla Arqueo-->
-        <section class="card text-bg-secondary p-3">
-            <header class="card-header">
-                <h3>Arqueo de Caja</h3>
-            </header>
-            <div class="card-body">
-                <table id="tabla-arqueo" class="table table-dark table-hover border border-secondary">
+        <section class="card text-bg-secondary">
+            <div class="card-body" id="data-info" data-info="Visualizando Arqueo">
+                <table id="tabla-arqueo" class="table table-dark table-hover border">
                     <thead class="table-secondary">
                         <tr>
                             <th>Concepto</th>
@@ -48,36 +50,35 @@
                     <tbody>
                         <tr>
                             <td><strong>Total Base(s)</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_base|intcomma }}" readonly></td>
+                            <td><input type="text" class="form-control format-numbers" value="{{ total_base }}" readonly></td>
                         </tr>
                         <tr>
                             <td><strong>Total Retiro(s)</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_retiros|intcomma }}" readonly></td>
+                            <td><input type="text" class="form-control format-numbers" value="{{ total_retiros }}" readonly></td>
                         </tr>
                         <tr>
-                            <td><strong>Ventas en Efectivo</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_efectivo|intcomma }}" readonly></td>
+                            <td><strong>Ventas Efectivo</strong></td>
+                            <td><input type="text" class="form-control format-numbers" value="{{ total_efectivo }}" readonly></td>
                         </tr>
                         <tr>
-                            <td><strong>Ventas en Nequi</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_nequi|intcomma }}" readonly></td>
+                            <td><strong>Ventas Nequi</strong></td>
+                            <td><input type="text" class="form-control format-numbers" value="{{ total_nequi }}" readonly></td>
                         </tr>
                         <tr>
-                            <td><strong>Ventas en Daviplata</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_davip|intcomma }}" readonly></td>
+                            <td><strong>Ventas Daviplata</strong></td>
+                            <td><input type="text" class="form-control format-numbers" value="{{ total_davip }}" readonly></td>
                         </tr>
                         <tr>
-                            <td><strong>Total en Caja</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_caja|intcomma }}" readonly></td>
+                            <td><strong>Total Caja</strong></td>
+                            <td><input type="text" class="form-control format-numbers" value="{{ total_caja }}" readonly></td>
                         </tr>
                         <tr>
-                            <td><strong>Total Ventas</strong></td>
-                            <td><input type="text" class="form-control" value="{{ total_ventas|intcomma }}" readonly></td>
+                            <td><strong>Total Venta(s)</strong></td>
+                            <td><input type="text" class="form-control format-numbers" value="{{ total_ventas }}" readonly></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
-</body>
 {% endblock %}

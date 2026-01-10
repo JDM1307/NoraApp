@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Productos{% endblock %}
 {% block content %}
-<body data-page="gestionar_productos" data-key_delete="eliminar_productos">
+<main id="page" data-page="Productos" data-tables="enable" data-key_delete="enable">
     <!-- Filtros y agregar Productos -->
     <section class="card text-bg-secondary mb-3">
         <header class="card-header">
@@ -88,5 +88,5 @@
             </tbody>
         </table>
     </section>
-</body>
+</main>
 {% endblock %}

@@ -1,45 +1,52 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Base{% endblock %}
 {% block content %}
-{% load humanize %}
-<main>
-    <!--Filtros-->
-    <section class="card text-bg-secondary mb-3">
-        <header class="card-header">
-            <div class="d-flex justify-content-between">
-                <h3>Gestionar Bases</h3>
-                <a class="btn btn-warning d-flex align-items-center" href="{% url 'index' %}">
-                    <i class="bi bi-arrow-90deg-left me-2"></i> Volver
-                </a>
-            </div>
+<main class="w-100 p-3 ps-2 pe-0 d-flex flex-column gap-3" 
+id="page" data-page="Bases" data-tables="enable">
+    <section class="card text-bg-secondary">
+        <header class="card-header d-flex justify-content-between">
+            <h3 class="fw-bold">Bases</h3>
+            <button class="btn btn-outline-warning" id="backButton">
+                <i class="bi bi-arrow-90deg-left me-1"></i> Volver
+            </button>
         </header>
-        <footer class="card-body">
-            <form method="get" action="#">
-                <div class="d-flex justify-content-start flex-wrap">
-                    <fieldset class="m-2">
-                        <label class="form-label">Fecha Inicio</label>
-                        <input class="form-control" type="date" name="fecha_inicio" value="{{ fecha_inicio }}" required>
+        <!--Filtros de busqueda-->
+        <div class="card-body">
+            <form method="get">
+                {% csrf_token %}           
+                <h5 class="fw-bold">Busca registros por:</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <fieldset class="d-flex flex-wrap gap-1 filter rounded p-1">
+                        <fieldset>
+                            <label class="form-label" for="desde">Fecha desde</label>
+                            <input class="form-control" id="desde" type="date" name="fecha_inicio" 
+                            value="{{ request.GET.fecha_inicio }}">
+                        </fieldset>
+                        <fieldset class="border-start border-secondary ps-1">
+                            <label class="form-label" for="hasta">Fecha hasta</label>
+                            <input class="form-control" id="hasta" type="date" name="fecha_fin" 
+                            value="{{ request.GET.fecha_fin }}">
+                        </fieldset>
                     </fieldset>
-                    <fieldset class="m-2">
-                        <label class="form-label">Fecha Fin</label>
-                        <input class="form-control" type="date" name="fecha_fin" value="{{ fecha_fin }}" required>
-                    </fieldset>
-                    <fieldset class="d-flex align-items-end m-2">
-                        <button class="btn btn-success" type="submit">Buscar</button>
+                    <fieldset class="d-flex align-items-end">
+                        <button class="btn btn-outline-success border text-light" type="submit">
+                            <i class="bi bi-search me-1"></i></i>Buscar
+                        </button>
                     </fieldset>
                 </div>
             </form>
-        </footer>
+        </div>
     </section>
     <!--Tabla Base-->
     <section class="card text-bg-secondary p-3">
-        <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
+        <table id="mi-tabla" class="table table-dark
+         table-hover border border-secondary">
             <thead class="table-secondary">
                 <tr>
                     <th class="text-start border-end border-dark">#</th>
-                    <th class="text-start">Valor</th>
+                    <th class="text-start">Monto</th>
                     <th class="text-start">Observaciones</th>
-                    <th class="text-satrt">Creado</th>
+                    <th class="text-satrt">Fecha</th>
                     <th class="text-satrt">Estado</th>
                     <th class="text-start">Responsable</th>
                     <th class="text-start">Acciones</th>
@@ -49,9 +56,11 @@
                 {% for bs in bases %}
                     <tr>
                         <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
-                        <td class="text-start">${{ bs.base_dia | intcomma }}</td>
+                        <td class="text-start format-numbers">{{ bs.base_dia }}</td>
                         <td class="text-start">{{ bs.base_observacion }}</td>
-                        <td class="text-start">{{ bs.creado_en }}</td>
+                        <td class="text-start"> <i class="bi bi-calendar2-check" data-bs-toggle="tooltip"
+                            data-bs-placement="top" data-bs-title="{{ bs.creado_en }}"></i>
+                        </td>
                         <td class="text-start">
                             {% if bs.actualizado_en %} 
                                 <i class="bi bi-pencil-square text-warning"
@@ -63,7 +72,7 @@
                         <td class="text-start">{{ bs.usuario.username|default:"?" }}</td>
                         <td class="text-start">
                             <a class="btn btn-sm btn-warning" href="{% url 'editar_base' bs.id %}"
-                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
+                            data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </td>

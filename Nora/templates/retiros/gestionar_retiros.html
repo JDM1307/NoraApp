@@ -1,90 +1,99 @@
 {% extends "base.html" %}
 {% block title %}Gestionar Retiros{% endblock %}
 {% block content %}
-<body data-page="gestionar-retiros" data-key_delete="eliminar_retiros">
-    <!--Filtros y agregar Retiros-->
-    <section class="card text-bg-secondary mb-3">
-        <header class="card-header">
+    <main class="w-100 p-3 ps-2 pe-0 d-flex flex-column gap-3" id="page" 
+    data-page="Retiros" data-tables="enable" data-key_delete="enable">
+    <section class="card text-bg-secondary">
+        <div class="card-header">
             <div class="d-flex justify-content-between">
-                <h3>Gestionar Retiros</h3>
-                <a class="btn btn-primary d-flex align-items-center" href="{% url 'agregar_retiro' %}">
+                <h3 class="fw-bold">Gestionar Retiros</h3>
+                <!--Agregar retiro-->
+                <a class="btn btn-outline-primary border text-light d-flex"
+                 href="{% url 'agregar_retiro' %}">
                     <i class="bi bi-plus-square me-1"></i>Agregar
                 </a>
             </div>
-        </header>
-        <footer class="card-body">
-            <form method="get" action="#">
-                <div class="d-flex justify-content-start flex-wrap">
-                    <fieldset class="m-2">
-                        <label class="form-label">Fecha Inicio</label>
-                        <input class="form-control" type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
-                    </fieldset>
-                    <fieldset class="m-2">
-                        <label class="form-label">Fecha Fin</label>
-                        <input class="form-control" type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
-                    </fieldset>
-                    <fieldset class="d-flex align-items-end m-2">
-                        <button class="btn btn-success" type="submit">Buscar</button>
-                    </fieldset>
-                </div>
-            </form>
-        </footer>
-    </section>
-    <!--Tabla Retiros de caja-->
-    <section class="card text-bg-secondary p-3">
-        <table id="mi-tabla" class="table table-dark table-hover border border-secondary">
-            <thead class="table-secondary">
-                <tr>
-                    <th class="text-start border-end border-dark">#</th>
-                    <th class="text-start">Valor</th>
-                    <th class="text-start">Observaciones</th>
-                    <th class="text-satrt">Creado</th>
-                    {% if request.user.is_superuser %}
-                    <th class="text-satrt">Estado</th>
-                    <th class="text-start">Responsable</th>
-                    <th class="text-start">Acciones</th>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for rt in retiros %}
+        </div>
+            <!--Filtros de busqueda-->
+            <div class="card-body">
+                <form method="get">
+                    {% csrf_token %}
+                    <h5 class="fw-bold">Busca registros por:</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <fieldset class="filter rounded p-1">
+                            <label class="form-label">Fecha desde</label>
+                            <input class="form-control" type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+                        </fieldset>
+                        <fieldset class="filter rounded p-1">
+                            <label class="form-label">Fecha hasta</label>
+                            <input class="form-control" type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
+                        </fieldset>
+                        <fieldset class="d-flex align-items-end">
+                            <button class="btn btn-outline-success border text-light" type="submit">Buscar</button>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <!--Tabla Retiros de caja-->
+        <section class="card text-bg-secondary p-3">
+            <table id="mi-tabla" class="table table-dark 
+            table-hover border border-secondary">
+                <thead class="table-secondary">
                     <tr>
-                        <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
-                        <td class="text-start">{{ rt.retiro_monto }}</td>
-                        <td class="text-start">{{ rt.retiro_observacion }}</td>
-                        <td class="text-start">{{ rt.creado_en }}</td>
+                        <th class="text-start border-end border-dark">#</th>
+                        <th class="text-start">Valor</th>
+                        <th class="text-start">Observaciones</th>
+                        <th class="text-satrt">Creado</th>
                         {% if request.user.is_superuser %}
-                        <td class="text-start">
-                            {% if rt.actualizado_en %} 
-                                <i class="bi bi-pencil-square text-warning"
-                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ rt.actualizado_en }}"></i>
-                            {% else %}
-                                <i class="bi bi-check-square text-success"></i>
-                            {% endif %}
-                        </td>
-                        <td class="text-start">{{ rt.usuario.username|default:"?" }}</td>
-                        <td class="text-start">
-                            <a class="btn btn-sm btn-warning" href="{% url 'editar_retiro' rt.id %}"
-                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a class="btn btn-sm btn-danger delete-btn"
-                            data-id="{{ rt.id }}"
-                            data-delete_url="eliminar/{{ rt.id }}/"
-                            data-msj_delete="¿Está seguro que desea eliminar el retiro: {{ rt.retiro_observacion }}?"
-                            data-bs-toggle="tooltip" 
-                            data-bs-placement="right" 
-                            data-bs-title="Eliminar">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
+                            <th class="text-satrt">Estado</th>
+                            <th class="text-start">Responsable</th>
+                            <th class="text-start">Acciones</th>
                         {% endif %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </section>
-</body>
+                </thead>
+                <tbody>
+                    {% for rt in retiros %}
+                        <tr>
+                            <td class="text-start border-end border-secondary">{{ forloop.counter }}</td>
+                            <td class="text-start format-numbers">{{ rt.retiro_monto }}</td>
+                            <td class="text-start">{{ rt.retiro_observacion }}</td>
+                            <td class="text-start">
+                                <i class="bi bi-calendar2-check" data-bs-toggle="tooltip" 
+                                data-bs-placement="top" data-bs-title="{{ rt.creado_en }}"></i>
+                            </td>
+                            {% if request.user.is_superuser %}
+                                <td class="text-start">
+                                    {% if rt.actualizado_en %} 
+                                        <i class="bi bi-pencil-square text-warning" data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" data-bs-title="{{ rt.actualizado_en }}"></i>
+                                    {% else %}
+                                        <i class="bi bi-check-square text-success"></i>
+                                    {% endif %}
+                                </td>
+                                <td class="text-start">{{ rt.usuario.username|default:"?" }}</td>
+                                <td class="text-start">
+                                    <a class="btn btn-sm btn-outline-warning" href="{% url 'editar_retiro' rt.id %}"
+                                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-danger delete-btn"
+                                    data-id="{{ rt.id }}"
+                                    data-delete_url="eliminar/{{ rt.id }}/"
+                                    data-msj_delete="Está seguro que desea eliminar el retiro: {{ rt.retiro_observacion }}"
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="right" 
+                                    data-bs-title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
 {% endblock %}
 
 

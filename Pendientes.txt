@@ -1,7 +1,6 @@
 POR IMPLEMENTAR:
 
-1. Implementar confirmacion con toast de sweetalert a agregar_pedido y editar_pedido al guardar y finalizar un pedido
+*. agregar medio de pago por tarjeta agregar_pedido y editar_pedido
 
-2. agregar medio de pago por tarjeta agregar_pedido y editar_pedido
+1. 
 
-3. implemntar columnas estado y responsable a tablas de cada modulo
