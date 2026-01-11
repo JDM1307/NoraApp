@@ -1,48 +1,84 @@
 {% extends "base.html" %}
 {% block title %}Agregar Base{% endblock %}
 {% block content %}
-    <main class="p-3 pe-0 d-flex flex-column gap-3 align-items-center" 
+
+    <main class="d-flex flex-column gap-2 justify-content-center align-items-center h-100 p-2 ps-0" 
     id="page" data-page="bases" data-key_create="enable">
-        <section class="card text-bg-secondary">
-            <div class="card-header">
-                <h3 class="fw-bold">Agregar Base</h3>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="d-flex flex-column gap-2">
-                        <fieldset class="rounded filter p-1">
-                            <label class="form-label" for="valor_base">Monto</label>
-                            <input placeholder="Digite un valor..." id="valor_base" 
-                            class="valor form-control" type="number" name="base_dia">
-                        </fieldset>
-                        <fieldset class="rounded filter p-1">
-                            <label class="form-label" for="observacion_base">Observacion</label>
-                            <textarea placeholder="Agregar observacion" class="form-control" 
-                            id="observacion_base" name="base_observacion">Ninguna</textarea>
-                        </fieldset>
-                        <fieldset class="d-flex justify-content-end">
-                            <button class="btn btn-outline-success border text-light save-btn" type="button" {% if existe_base %} disabled {% endif %}
-                            data-msj_create="Está seguro de grabar esta base en: $">
-                                <i class="bi bi-save2 me-1"></i>Grabar
-                            </button>
-                        </fieldset>
-                    </div>
-                </form>
-            </div>
-        </section>
+
         {% if not existe_base %}
-            <section class="alert warning-msj border border-warning text-center fw-bold text-focus-in">
-                <i class="bi bi-exclamation-diamond"></i>
-                Por favor ingrese una base para el turno de hoy
-                <i class="bi bi-exclamation-diamond"></i>
+            <!--Panel Ag Base-->    
+            <section class="card bg-secondary shadow-inset-left-bottom">
+                <div class="card-header px-3 py-0 border border-bottom-0">
+                    <h3 class="fw-bold m-0">Agregar Base</h3>
+                </div>
+                
+                <div class="card-body px-3 py-2">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex flex-column gap-1">
+
+                            <fieldset class="rounded filter p-1">
+                                <label class="form-label m-0 w-100" for="valor_base">Monto :</label>
+                                <div class="input-group active-border-group">
+                                    <span class="input-group-text px-1 bg-dark-light border border-dark">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </span>
+                                    <input placeholder="Digitar valor" id="valor_base" 
+                                    class="valor form-control border-0" autocomplete="off" required type="number" name="base_dia">
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="rounded filter p-1">
+                                <label class="form-label m-0 w-100" for="observacion_base">Observacion</label>
+                                <div class="input-group active-border-group">
+                                    <span class="input-group-text px-1 bg-dark-light border border-dark">
+                                        <i class="bi bi-pen"></i>
+                                    </span>
+                                    <textarea class="form-control border-0 input-not-focus" 
+                                    id="observacion_base" name="base_observacion"> </textarea>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="d-flex justify-content-end">
+                                <button class="btn btn-success border save-btn shadow-inset-left-bottom hover-lift" type="button" 
+                                {% if existe_base %} disabled {% endif %}
+                                data-msj_create="Guardar base por el monto de: $">
+                                    <i class="bi bi-save2 me-1"></i>Guardar
+                                </button>
+                            </fieldset>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!--Panel Alertas--> 
+            <section class="card text-center fw-bold jello-horizontal shadow-inset-left-bottom">
+                <div class="card-header warning-msj px-3 py-1 d-flex justify-content-between">
+                    <i class="bi bi-exclamation-diamond"></i>
+                    IMPORTANTE
+                    <i class="bi bi-exclamation-diamond"></i>
+                </div>
+                <div class="card-body">
+                    Es necesario ingresar el monto de la base para continuar
+                </div>
             </section>
         {% elif existe_base %}
-        <section class="alert success-msj border border-success text-center fw-bold text-focus-in">
-            <i class="bi bi-check-circle"></i>
-                Ya existe una base para el dia de hoy
-            <i class="bi bi-check-circle"></i>
-        </section>
+            <!--Panel Alertas--> 
+            <section class="card text-center fw-bold jello-horizontal shadow-inset-left-bottom">
+                <div class="card-header warning-msj px-3 py-1 d-flex justify-content-between">
+                    <i class="bi bi-exclamation-diamond"></i>
+                    IMPORTANTE
+                    <i class="bi bi-exclamation-diamond"></i>
+                </div>
+                <div class="card-body d-flex flex-column gap-2">
+                    El monto de la base ya fué registrado
+                    <a class="btn btn-success shadow-inset-left-bottom border hover-lift" href="{% url 'index' %}">
+                        Ir a la barra principal 
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </a>
+                </div>
+            </section>
         {% endif %}
     </main>
+    
 {% endblock %}

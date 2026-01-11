@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // Boton volver
+        // Boton volver ventana anterior
         let backBtn;
         backBtn = document.getElementById("backButton");
         if (backBtn) {
@@ -439,7 +439,45 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
 
-    /**/  
-    
+    /*layout*/  
+    function initActiveBorderGroup() {
+    const groups = document.querySelectorAll('.active-border-group');
+    let lastTabDirection = 'forward';
+
+    // detectar TAB / SHIFT+TAB
+        document.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            lastTabDirection = e.shiftKey ? 'backward' : 'forward';
+        }
+    });
+
+    // cuando un elemento interno recibe foco
+    groups.forEach(group => {
+        group.addEventListener('focusin', e => {
+            groups.forEach(g => g.classList.remove('is-active'));
+
+            group.classList.add('active-neon-border', 'is-active');
+            group.dataset.tabDirection = lastTabDirection;
+        });
+
+        // si todo el grupo pierde foco
+        group.addEventListener('focusout', e => {
+            if (!group.contains(e.relatedTarget)) {
+            group.classList.remove('is-active');
+            }
+        });
+    });
+
+    // click fuera => apagar todo
+    document.addEventListener('click', e => {
+        if (![...groups].some(g => g.contains(e.target))) {
+            groups.forEach(g => g.classList.remove('is-active'));
+        }
+        });
+    }
+
+
+
+    initActiveBorderGroup();
     
 });

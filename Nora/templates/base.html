@@ -21,7 +21,8 @@
     <script src="{% static 'sweetalert2/dist/sweetalert2.all.min.js' %}"></script>
     <script src="{% static 'lottie-web/build/player/lottie.js' %}" type="text/javascript"></script>
 </head>
-<body class="body border border-danger"> 
+<body> 
+    
     <!--Mensajes y Alertas-->
     <section>
         <div id="data-messages" data-messages='[
@@ -34,109 +35,115 @@
 
     {% if user.is_authenticated %}
     <!--Sidebar navegacion-->
-    <section class="d-flex position-fixed top-0 end-0 h-100 w-70px">
-        <div class="d-flex justify-content-center w-100">
-            <nav class="sidebar rounded border d-flex flex-column gap-3 mt-3 mb-3 p-1 text-bg-secondary">
-                <span class="badge bg-navbar p-0 pt-1 pb-1 border border-dark">Menu</span>
-                <!--Barra-->
-                <a class="
-                {% if request.resolver_match.url_name in 'index' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'index' %}">
-                    <div class="sidebar-icon" id="home-icon" 
-                    data-path="{% static 'lottie-web/icons/wired-outline-63-home-hover-3d-roll.json' %}" 
-                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="BARRA"></div>
-                </a>
-                <!--Pedidos-->
-                <a class="
-                {% if request.resolver_match.url_name in 'gestionar_pedidos agregar_pedido editar_pedido ver_pedido' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'gestionar_pedidos' %}">
-                    <div class="sidebar-icon" id="ventas-icon"
-                    data-path="{% static 'lottie-web/icons/wired-outline-146-trolley-hover-jump.json' %}" 
-                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="PEDIDOS"></div>
-                </a>
-                <!--Retiros de caja-->
-                <a class="
-                {% if request.resolver_match.url_name in 'gestionar_retiros agregar_retiro editar_retiro' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'gestionar_retiros' %}">
-                    <div class="sidebar-icon" id="retiros-icon"
-                    data-path="{% static 'lottie-web/icons/wired-outline-1933-vote-elections-hover-pinch.json' %}"  
-                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="RETIROS"></div>
-                </a>
-                <!--Arqueos-->
-                <a class="
-                {% if request.resolver_match.url_name in 'arqueo_caja' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'arqueo_caja' %}">
-                    <div class="sidebar-icon" id="arqueos-icon"
-                    data-path="{% static 'lottie-web/icons/wired-outline-2947-calendar-christmas-eve-hover-pinch.json' %}" 
-                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="ARQUEOS"></div>
-                </a>
-                <!--Cierres-->
-                <a class=" 
-                {% if request.resolver_match.url_name in 'gestionar_cierres agregar_cierre editar_cierre' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'gestionar_cierres' %}">
-                    <div class="sidebar-icon"
-                    data-path="{% static 'lottie-web/icons/wired-outline-153-bar-chart-hover-growth.json' %}" 
-                    id="cierres-icon" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="CIERRES"></div>
-                </a>
-                <!--Bases-->
-                <a class="
-                {% if request.resolver_match.url_name in 'gestionar_bases agregar_base editar_base' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'gestionar_bases' %}">
-                    <div class="sidebar-icon" id="bases-icon"
-                    data-path="{% static 'lottie-web/icons/wired-outline-948-stock-share-hover-pinch.json' %}" 
-                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="BASES"></div>
-                </a>
-                <!--Productos-->
-                <a class="
-                {% if request.resolver_match.url_name in 'gestionar_productos agregar_producto editar_producto' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'gestionar_productos' %}">
-                    <div class="sidebar-icon" id="productos-icon"
-                    data-path="{% static 'lottie-web/icons/wired-outline-567-french-fries-chips-hover-pinch.json' %}" 
-                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="PRODUCTOS"></div>
-                </a>
-                <!--Grupos-->
-                <a class=" 
-                {% if request.resolver_match.url_name in 'gestionar_grupos agregar_grupos editar_grupos' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'gestionar_grupos' %}">
-                    <div class="sidebar-icon" id="grupos-icon" 
-                    data-path="{% static 'lottie-web/icons/wired-outline-1360-grocery-shelf-in-reveal.json' %}" 
-                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="GRUPOS"></div>
-                </a>
-                <!--Mesas-->
-                <a class="
-                {% if request.resolver_match.url_name in 'gestionar_mesas agregar_mesas editar_mesas' %}
-                    bg-dark rounded border
-                {% endif %}" href="{% url 'gestionar_mesas' %}">
-                    <div class="sidebar-icon" id="mesas-icon" 
-                    data-path="{% static 'lottie-web/icons/wired-outline-12-layers-hover-slide.json' %}" 
-                    data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="MESAS"></div>
-                </a>
-                <div class="flex-grow-1"></div>
-                <!--Usuario-->
-                <form  action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button class="btn btn-outline-dark p-0 border border-light sidebar-icon"  
-                    type="submit" id="logout-btn"data-bs-toggle="tooltip" data-bs-placement="left" 
-                    data-bs-title="{{ user.username }}" data-msj_logout="Está seguro de cerrar sesión">
-                        <div id="user-icon" 
-                        data-path="{% static 'lottie-web/icons/wired-outline-268-avatar-man-hover-glance.json' %}"></div>
-                    </button>
-                </form>
-            </nav>         
-        </div>   
+    <section class="sidebar-container p-2">
+        <nav class="d-flex flex-column rounded border h-100 gap-3 p-1 bg-secondary shadow-inset-left-bottom border border-light">
+            <span class="badge text-bg-light p-0 py-1 border border-dark shadow-inset-left-bottom">Menu</span>
+            <!--Barra-->
+            <a class="
+            {% if request.resolver_match.url_name in 'index' %}
+                 bg-icon_selected rounded border border-dark
+            {% endif %}" href="{% url 'index' %}">
+                <div class="sidebar-icon" id="home-icon" 
+                data-path="{% static 'lottie-web/icons/wired-outline-63-home-hover-3d-roll.json' %}" 
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="BARRA"></div>
+            </a>
+            <!--Pedidos-->
+            <a class="
+            {% if request.resolver_match.url_name in 'gestionar_pedidos agregar_pedido editar_pedido ver_pedido' %}
+                bg-icon_selected rounded border border-dark
+            {% endif %}" 
+            href="{% url 'gestionar_pedidos' %}">
+                <div class="sidebar-icon" id="ventas-icon"
+                data-path="{% static 'lottie-web/icons/wired-outline-146-trolley-hover-jump.json' %}" 
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="PEDIDOS"></div>
+            </a>
+            <!--Retiros de caja-->
+            <a class="
+            {% if request.resolver_match.url_name in 'gestionar_retiros agregar_retiro editar_retiro' %}
+                 bg-icon_selected rounded border border-dark
+            {% endif %}" href="{% url 'gestionar_retiros' %}">
+                <div class="sidebar-icon" id="retiros-icon"
+                data-path="{% static 'lottie-web/icons/wired-outline-1933-vote-elections-hover-pinch.json' %}"  
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="RETIROS"></div>
+            </a>
+            <!--Arqueos-->
+            <a class="
+            {% if request.resolver_match.url_name in 'arqueo_caja' %}
+                 bg-icon_selected rounded border border-dark
+            {% endif %}" href="{% url 'arqueo_caja' %}">
+                <div class="sidebar-icon" id="arqueos-icon"
+                data-path="{% static 'lottie-web/icons/wired-outline-2947-calendar-christmas-eve-hover-pinch.json' %}" 
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="ARQUEOS"></div>
+            </a>
+            <!--Cierres-->
+            <a class=" 
+            {% if request.resolver_match.url_name in 'gestionar_cierres agregar_cierre editar_cierre' %}
+                 bg-icon_selected rounded border border-dark
+            {% endif %}" href="{% url 'gestionar_cierres' %}">
+                <div class="sidebar-icon"
+                data-path="{% static 'lottie-web/icons/wired-outline-153-bar-chart-hover-growth.json' %}" 
+                id="cierres-icon" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="CIERRES"></div>
+            </a>
+            <!--Bases-->
+            <a class="
+            {% if request.resolver_match.url_name in 'gestionar_bases agregar_base editar_base' %}
+                 bg-icon_selected rounded border border-dark
+            {% endif %}" href="{% url 'gestionar_bases' %}">
+                <div class="sidebar-icon" id="bases-icon"
+                data-path="{% static 'lottie-web/icons/wired-outline-948-stock-share-hover-pinch.json' %}" 
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="BASES"></div>
+            </a>
+            <!--Productos-->
+            <a class="
+            {% if request.resolver_match.url_name in 'gestionar_productos agregar_producto editar_producto' %}
+                 bg-icon_selected rounded border border-dark
+            {% endif %}" href="{% url 'gestionar_productos' %}">
+                <div class="sidebar-icon" id="productos-icon"
+                data-path="{% static 'lottie-web/icons/wired-outline-567-french-fries-chips-hover-pinch.json' %}" 
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="PRODUCTOS"></div>
+            </a>
+            <!--Grupos-->
+            <a class=" 
+            {% if request.resolver_match.url_name in 'gestionar_grupos agregar_grupos editar_grupos' %}
+                 bg-icon_selected rounded border border-dark
+            {% endif %}" href="{% url 'gestionar_grupos' %}">
+                <div class="sidebar-icon" id="grupos-icon" 
+                data-path="{% static 'lottie-web/icons/wired-outline-1360-grocery-shelf-in-reveal.json' %}" 
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="GRUPOS"></div>
+            </a>
+            <!--Mesas-->
+            <a class="
+            {% if request.resolver_match.url_name in 'gestionar_mesas agregar_mesas editar_mesas' %}
+                 bg-icon_selected rounded border border-dark
+            {% endif %}" href="{% url 'gestionar_mesas' %}">
+                <div class="sidebar-icon" id="mesas-icon" 
+                data-path="{% static 'lottie-web/icons/wired-outline-12-layers-hover-slide.json' %}" 
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="MESAS"></div>
+            </a>
+
+            <!--Usuario-->
+            <div class="flex-grow-1"></div>
+            <form  action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger px-2 border border-light hover-lift shadow-inset-left-bottom"  
+                type="submit" id="logout-btn"data-bs-toggle="tooltip" data-bs-placement="right" 
+                data-bs-title="Cerrar Sesión" data-msj_logout="Está seguro de cerrar sesión">
+                    <div id="user-icon" 
+                    data-path="{% static 'lottie-web/icons/wired-outline-268-avatar-man-hover-glance.json' %}"></div>
+                </button>
+            </form>
+        </nav>         
     </section>
     {% endif %}
 
-    <!--Contenido de plantillas-->
-    <section class="container-fluid p-0 h-100 border border-success">
+    <!--Contenedor principal de plantillas-->
+    <section class="
+    {% if user.is_authenticated %} 
+        main-container 
+    {% endif %} 
+    {% if not user.is_authenticated %}
+        container-fluid h-100 
+    {% endif %}">
         {% block content %}{% endblock %}
     </section>
 

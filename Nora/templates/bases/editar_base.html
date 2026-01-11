@@ -1,39 +1,69 @@
 {% extends "base.html" %}
 {% block title %}Editar Base{% endblock %}
 {% block content %}
-    <main class="p-3 pe-0 d-flex flex-column gap-3 align-items-center" 
+
+    <main class="d-flex flex-column gap-2 justify-content-center align-items-center h-100 p-2 ps-0" 
     id="page" data-page="bases" data-key_create="enable">
-        <section class="card text-bg-secondary">
-            <header class="card-header">
-                <h3 class="fw-bold">Editar Base</h3>
-            </header>
-            <div class="card-body">
+
+        <!--Panel Edit Base-->
+        <section class="card bg-secondary shadow-inset-left-bottom">
+            <div class="card-header px-3 py-0 border border-bottom-0">
+                    <h3 class="fw-bold m-0">Editar Base</h3>
+            </div>
+
+            <div class="card-body px-3 py-2">
                 <form method="post">
                     {% csrf_token %}
-                    <div class="d-flex flex-column gap-2">
+                    <div class="d-flex flex-column gap-1">
+
                         <fieldset class="rounded filter p-1">
-                            <label class="form-label" for="valor_base">Valor</label>
-                            <input placeholder="Digite un valor..." class="valor form-control  text-success" 
-                            type="number" id="valor_base" value="{{ base.base_dia }}" name="base_dia">
+                            <label class="form-label m-0 w-100" for="valor_base">Monto :</label>
+                            <div class="input-group active-border-group">
+                                <span class="input-group-text px-1 bg-dark-light border border-dark">
+                                    <i class="bi bi-currency-dollar"></i>
+                                </span>
+                                <input placeholder="Digitar valor" id="valor_base" 
+                                class="valor form-control border-0" autocomplete="off" required type="number" name="base_dia" value="{{ base.base_dia }}">
+                            </div>
                         </fieldset>
+
                         <fieldset class="rounded filter p-1">
-                            <label class="form-label" for="observacion_base">Observacion</label>
-                            <textarea placeholder="Agregar observacion" class="form-control text-success"
-                            id="observacion_base" name="base_observacion">{{ base.base_observacion }}</textarea>
+                            <label class="form-label m-0 w-100" for="observacion_base">Observacion</label>
+                            <div class="input-group active-border-group">
+                                <span class="input-group-text px-1 bg-dark-light border border-dark">
+                                    <i class="bi bi-pen"></i>
+                                </span>
+                                <textarea class="form-control border-0 input-not-focus" 
+                                id="observacion_base" name="base_observacion" required>{{ base.base_observacion }}</textarea>
+                            </div>
                         </fieldset>
+
                         <fieldset class="d-flex justify-content-between gap-2">
-                            <a class="btn btn-outline-danger border border-dark text-dark fw-bold" 
+                            <a class="btn btn-danger border shadow-inset-left-bottom hover-lift" 
                             href="{% url 'gestionar_bases' %}">
                                 <i class="bi bi-x-circle me-1"></i>Cancelar
                             </a>
-                            <button class="btn btn-outline-success border text-light save-btn" type="button"
-                            data-msj_create="Está seguro de actualizar esta base en: $">
-                                <i class="bi bi-save2 me-1"></i>Actualizar
+                            <button class="btn btn-success border save-btn shadow-inset-left-bottom hover-lift" type="button"
+                            data-msj_create="Actualizar el monto de la base: ${{ base.base_dia }} en: $">
+                                <i class="bi bi-save2 me-1"></i>Guardar
                             </button>
                         </fieldset>
                     </div>
                 </form>
             </div>
         </section>
+
+        <!--Panel Alertas--> 
+        <section class="card text-center fw-bold jello-horizontal shadow-inset-left-bottom">
+            <div class="card-header warning-msj px-3 py-1 d-flex justify-content-between">
+                <i class="bi bi-exclamation-diamond"></i>
+                IMPORTANTE
+                <i class="bi bi-exclamation-diamond"></i>
+            </div>
+            <div class="card-body">
+                Agregue una observación por cada vez que actualice el monto.
+            </div>
+        </section>
     </main>
+    
 {% endblock %}
